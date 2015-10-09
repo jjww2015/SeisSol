@@ -123,7 +123,7 @@ CONTAINS
     REAL                            :: material(1:3), MaterialVal_k
     REAL                            :: ZoneIns, ZoneTrans, xG, yG, X2, LocX(3), LocY(3), tmp
     REAL                            :: BedrockVelModel(7,4)
-    REAL                            :: b11, b33, b13, g, Pf
+    REAL                            :: b11, b22, b33, b13, b23, b12, g, Pf
     INTEGER                         :: eType
     INTEGER         :: nTens3GP
     REAL,POINTER    :: Tens3GaussP(:,:)
@@ -578,6 +578,48 @@ CONTAINS
 
         ENDDO
 
+      CASE(121) !DIP10 : diping fault, 10 deg dip
+
+         ! R = 0.5
+         b11 = 1.3788
+         b22 = 1.1894
+         b12 = 0.0
+         b13 = 0.2541
+         b23 = 0.0000
+
+         g = 9.8D0    
+
+        MaterialVal(:,1) = EQN%rho0
+        MaterialVal(:,2) = EQN%mu
+        MaterialVal(:,3) = EQN%lambda
+        ! Initialisation of IniStress(6 stress components in 3D)
+        !
+        ALLOCATE(EQN%IniStress(6,MESH%nElem))
+                 EQN%IniStress(:,:)=0.0D0
+
+        DO iElem=1, MESH%nElem
+
+                z = MESH%ELEM%xyBary(3,iElem) !average depth inside an element
+
+          IF (z.GE.-17000.0D0) THEN
+              Omega = 1D0
+          ELSEIF (z.GE.-22000D0) THEN
+              Omega = (z+22000D0)/5000D0
+          ELSE
+              Omega = 0D0
+          ENDIF
+          Pf = -1000D0 * g * z
+          EQN%IniStress(3,iElem)  =  2670d0*g*z
+          EQN%IniStress(1,iElem)  =  Omega*(b11*(EQN%IniStress(3,iElem)+Pf)-Pf)+(1d0-Omega)*EQN%IniStress(3,iElem)
+          EQN%IniStress(2,iElem)  =  Omega*(b22*(EQN%IniStress(3,iElem)+Pf)-Pf)+(1d0-Omega)*EQN%IniStress(3,iElem)
+          EQN%IniStress(4,iElem)  =  Omega*(b12*(EQN%IniStress(3,iElem)+Pf))
+          EQN%IniStress(5,iElem)  =  Omega*(b13*(EQN%IniStress(3,iElem)+Pf))
+          EQN%IniStress(6,iElem)  =  Omega*(b23*(EQN%IniStress(3,iElem)+Pf))
+          EQN%IniStress(1,iElem)  =  EQN%IniStress(1,iElem) + Pf
+          EQN%IniStress(2,iElem)  =  EQN%IniStress(2,iElem) + Pf
+          EQN%IniStress(3,iElem)  =  EQN%IniStress(3,iElem) + Pf
+
+        ENDDO
 
 
       CASE(60) ! special case of 1D layered medium, imposed without meshed layers for Landers 1992
