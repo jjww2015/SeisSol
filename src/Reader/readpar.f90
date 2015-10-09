@@ -531,7 +531,7 @@ CONTAINS
       ENDDO
       CLOSE(IO%UNIT%other01)      
       !
-  CASE(12,30) ! Plasticity with constant material properties, initial stress (loading) must be assigned to every element in the domain
+  CASE(12,30, 121) ! Plasticity with constant material properties, initial stress (loading) must be assigned to every element in the domain
            ! special case for TPV13, add other cases that use plasticity with different initial stress values here
       IF (EQN%Plasticity.EQ.1)THEN
         logInfo(*) 'Jacobians are globally constant with rho0, mu, lambda:'

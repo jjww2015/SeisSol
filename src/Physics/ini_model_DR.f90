@@ -1993,10 +1993,18 @@ MODULE ini_model_DR_mod
   ! stress is assigned to each Gaussian node
   ! depth dependent stress function (gravity)
   ! NOTE: z negative is depth, free surface is at z=0
-  b11 = 0.9704
-  b22 = 0.9852
+  ! dip-10
+  ! R = 0.8
+  b11 = 1.4119
+  b22 = 1.2059
   b12 = 0.0
-  b13 = 0.2566
+  b13 = 0.2763
+  b23 = 0.0000
+  ! R = 0.5
+  b11 = 1.3788
+  b22 = 1.1894
+  b12 = 0.0
+  b13 = 0.2541
   b23 = 0.0000
 
   g = 9.8D0    
