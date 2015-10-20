@@ -2012,9 +2012,45 @@ MODULE ini_model_DR_mod
   b12 = 0.0
   b13 = 0.2689
   b23 = 0.0000
+  ! R = 0.85
+  b11 = 1.4174
+  b22 = 1.2087
+  b12 = 0.000
+  b13 = 0.2800
+  b23 = 0.0000
+  ! R = 0.85
+  b11 = 1.4009
+  b22 = 1.2005
+  b12 = 0.0000
+  b13 = 0.2689
+  b23 = 0.0000
+  ! R = 0.9
+  b11 = 1.4055
+  b22 = 1.2027
+  b12 = 0.0000
+  b13 = 0.2720
+  b23 = 0.0000
+  ! R = 0.7 DIP 16 (inc)
+  b11 = 1.5144
+  b22 = 1.2527
+  b12 = 0.0000
+  b13 = 0.2260
+  b23 = 0.0000
+  ! R = 0.4 DIP 16 (inc)
+  b11 = 1.4760
+  b22 = 1.2280
+  b12 = 0.0000
+  b13 = 0.2091
+  b23 = 0.0000
+  ! R = 0.5 DIP 16 (inc)
+  b11 = 1.4887
+  b22 = 1.2444
+  b12 = 0.0000
+  b13 = 0.2147
+  b23 = 0.0000
 
   g = 9.8D0    
-  zIncreasingCohesion = -250.
+  zIncreasingCohesion = -5000.
   ! Loop over every mesh element
   DO i = 1, MESH%Fault%nSide
        
@@ -2096,7 +2132,7 @@ MODULE ini_model_DR_mod
           ! manage cohesion
           IF (zGP.GE.zIncreasingCohesion) THEN
               ! higher cohesion near free surface
-              DISC%DynRup%cohesion(i,iBndGP) = -0.4d6-0.0002d6*(zGP-zIncreasingCohesion)
+              DISC%DynRup%cohesion(i,iBndGP) = -0.4d6-0.8d6*(zGP-zIncreasingCohesion)/(-zIncreasingCohesion)
           ELSE
               ! set cohesion
               DISC%DynRup%cohesion(i,iBndGP) = -0.4d6

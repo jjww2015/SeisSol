@@ -593,6 +593,15 @@ CONTAINS
 	  b13 = 0.2689
 	  b23 = 0.0000
 
+	  ! R = 0.5 DIP 16 (inc)
+	  b11 = 1.4887
+	  b22 = 1.2444
+	  b12 = 0.0000
+	  b13 = 0.2147
+	  b23 = 0.0000
+
+
+
          g = 9.8D0    
 
         MaterialVal(:,1) = EQN%rho0
@@ -607,10 +616,10 @@ CONTAINS
 
                 z = MESH%ELEM%xyBary(3,iElem) !average depth inside an element
 
-          IF (z.GE.-17000.0D0) THEN
+          IF (z.GE.-45000.0D0) THEN
               Omega = 1D0
-          ELSEIF (z.GE.-22000D0) THEN
-              Omega = (z+22000D0)/5000D0
+          ELSEIF (z.GE.-50000D0) THEN
+              Omega = (z+50000D0)/5000D0
           ELSE
               Omega = 0D0
           ENDIF
