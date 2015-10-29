@@ -624,7 +624,7 @@ CONTAINS
               Omega = 0D0
           ENDIF
           Pf = -1000D0 * g * z
-          EQN%IniStress(3,iElem)  =  2670d0*g*z
+          EQN%IniStress(3,iElem)  =  2670d0*g*z - 1000D0 * g * 2500d0
           EQN%IniStress(1,iElem)  =  Omega*(b11*(EQN%IniStress(3,iElem)+Pf)-Pf)+(1d0-Omega)*EQN%IniStress(3,iElem)
           EQN%IniStress(2,iElem)  =  Omega*(b22*(EQN%IniStress(3,iElem)+Pf)-Pf)+(1d0-Omega)*EQN%IniStress(3,iElem)
           EQN%IniStress(4,iElem)  =  Omega*(b12*(EQN%IniStress(3,iElem)+Pf))

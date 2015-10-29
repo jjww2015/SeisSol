@@ -2119,7 +2119,7 @@ MODULE ini_model_DR_mod
 
           Pf = -1000D0 * g * zGP
 
-          EQN%IniBulk_zz(i,iBndGP)  =  2670d0*g*zGP
+          EQN%IniBulk_zz(i,iBndGP)  =  2670d0*g*zGP - 1000D0 * g * 2500d0
           EQN%IniBulk_xx(i,iBndGP)  =  Omega*(b11*(EQN%IniBulk_zz(i,iBndGP)+Pf)-Pf)+(1d0-Omega)*EQN%IniBulk_zz(i,iBndGP)
           EQN%IniBulk_yy(i,iBndGP)  =  Omega*(b22*(EQN%IniBulk_zz(i,iBndGP)+Pf)-Pf)+(1d0-Omega)*EQN%IniBulk_zz(i,iBndGP)
           EQN%IniShearXY(i,iBndGP)  =  Omega*(b12*(EQN%IniBulk_zz(i,iBndGP)+Pf))
