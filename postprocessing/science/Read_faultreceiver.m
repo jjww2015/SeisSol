@@ -53,12 +53,14 @@ disp('     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
 disp(' '),disp(' ')
 
 clear, close all;
-filename = input('     Specify root-filename (typically: **file**-pickpoints-, without the -):  ','s');
+%filename = input('     Specify root-filename (typically: **file**-pickpoints-, without the -):  ','s');
 
+workingdir='./tp29-50/'
+prefix='tpv29-50'
 
 %evaluate nb of files and nb of time samples
 %do not consider files with only header
-eval(['!find -name "',filename,'*faultreceiver*" -size +50k | xargs wc -l > tmp.dat']);
+eval(['!find ', workingdir,' -name "',prefix,'*faultreceiver*" -size +50k | xargs wc -l > tmp.dat']);
 tmp_file = 'tmp.dat';
 fid   = fopen(tmp_file);
 command_result = textscan(fid,'%d %s',[inf 2]);

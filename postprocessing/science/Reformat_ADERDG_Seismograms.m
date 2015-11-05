@@ -55,15 +55,17 @@ disp('     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
 disp(' '),disp(' ')
 
 clear, close all;
-filename = input('     Specify root-filename (typically: *file*-receiver-...):  ','s');
+
+workingdir='./tp29-50/'
+prefix='tpv29-50'
 
 %evaluate nb of files and nb of time samples
 %do not consider files with only header
-eval(['!find -name "',filename,'*-receiver*" -size +30k | xargs wc -l > tmp.dat']);
+eval(['!find ', workingdir,' -name "',prefix,'*-receiver*" -size +30k | xargs wc -l > tmp.dat']);
 
 tmp_file = 'tmp.dat';
 fid   = fopen(tmp_file);
-command_result = textscan(fid,'%d %s',[2 inf]);
+command_result = textscan(fid,'%d %s',[inf 2]);
 fclose(fid);
 eval(['!rm tmp.dat']);
 
