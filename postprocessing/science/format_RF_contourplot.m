@@ -42,7 +42,6 @@ clear all
 
 %tpv = input('Specify TPV case:  ','s');
 
-disp('Code revision 782???');
 
 % load mat file from read_RF.m script
 disp('Load data...')
@@ -90,12 +89,11 @@ fprintf(fid,'# problem=TPV29\n');
 fprintf(fid,'# author=Thomas ULRICH\n');
 fprintf(fid,['# date=',str3,'\n']);
 fprintf(fid,'# code=SeisSol (ADER-DG)\n');
-fprintf(fid,'# code_version=revision 2280\n');
 %printf(fid,'# Background stress is assigned to a complete element determined by its geometrical barycenter\n');
 fprintf(fid,'# Background stress is assigned to each individual Gaussian integation point (GP)\n');    
-fprintf(fid,'# element_size=100 m on fault 5000m far away Growth rate 1.10\n');
-fprintf(fid,'# 0,40e6 tetra elements\n');
-fprintf(fid,'# order of approximation in space and time= O4\n');
+fprintf(fid,'# element_size=50 m on fault 5000m far away Growth rate 1.15\n');
+fprintf(fid,'# 8,40e6 tetra elements\n');
+fprintf(fid,'# order of approximation in space and time= O3\n');
 fprintf(fid,'# Column #1 = horizontal coordinate, distance along strike (m)\n');
 fprintf(fid,'# Column #2 = vertical coordinate, distance down-dip (m)\n');
 fprintf(fid,'# Column #3 = rupture time (s)\n');
