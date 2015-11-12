@@ -44,7 +44,7 @@ xi, zi = np.meshgrid(Xi, Zi)
 
 # Interpolate using delaunay triangularization 
 ti = griddata((x,z), t, (xi, zi), method='cubic', fill_value = 1e20)
-yi = griddata((x,z), z, (xi, zi), method='cubic', fill_value = 0.)
+yi = griddata((x,z), y, (xi, zi), method='cubic', fill_value = 0.)
 
 
 if useGaussianFilter:
