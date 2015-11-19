@@ -46,7 +46,7 @@
 
 class vtkWriter{
 private:
-  static int const NVar = 15;
+  static int const NVar = 16;
   static char const * const Labels[];
 
         bool _dirCreated;

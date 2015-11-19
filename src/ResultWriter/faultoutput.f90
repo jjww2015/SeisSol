@@ -653,6 +653,10 @@ CONTAINS
                   OutVars = OutVars + 1
                   DynRup_output%OutVal(iOutPoints,1,OutVars) = DISC%DynRup%Slip(iFace,iBndGP)
               ENDIF
+              IF (DynRup_output%OutputMask(9).EQ.1) THEN
+                  OutVars = OutVars + 1
+                  DynRup_output%OutVal(iOutPoints,1,OutVars) = DISC%DynRup%PeakSR(iFace,iBndGP)
+              ENDIF
           ENDIF
 
 
