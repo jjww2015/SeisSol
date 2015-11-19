@@ -864,7 +864,7 @@ MODULE TypesDef
      INTEGER                                :: nOutVars
         !< Number of output variables (calculated using OututMask)
      INTEGER                                :: printtimeinterval                !< Time interval at which output will be written
-     INTEGER                                :: OutputMask(1:8)                  !< Info of desired output 1/ yes, 0/ no - position: 1/ slip rate 2/ stress 3/ normal velocity 4/ in case of rate and state output friction and state variable 5/ initial stress fields 6/ displacement 7/rupture speed 8/accumulated slip
+     INTEGER                                :: OutputMask(1:9)                  !< Info of desired output 1/ yes, 0/ no - position: 1/ slip rate 2/ stress 3/ normal velocity 4/ in case of rate and state output friction and state variable 5/ initial stress fields 6/ displacement 7/rupture speed 8/accumulated slip 9/Peak SR
      INTEGER                      , POINTER :: OutputLabel(:)    => NULL()               !< Info of desired output 1/ yes, 0/ no - position: 1/ slip rate 2/ stress 3/ normal velocity 4/ in case of rate and state output friction and state variable 5/ initial stress fields
      LOGICAL                                :: DR_pick_output                   !< DR output at certain receiver stations
      INTEGER                                :: nDR_pick                         !< number of DR output receiver for this domain
@@ -888,6 +888,7 @@ MODULE TypesDef
      REAL, POINTER                          :: Slip2(:,:) => NULL()                      !< Slip at given fault node along loc dir 2
      REAL, POINTER                          :: SlipRate1(:,:) => NULL()                  !< Slip Rate at given fault node
      REAL, POINTER                          :: SlipRate2(:,:) => NULL()                  !< Slip Rate at given fault node
+     REAL, POINTER                          :: PeakSR(:,:) => NULL()                  !< Slip Rate at given fault node
      REAL, POINTER                          :: Mu(:,:) => NULL()                         !< Current friction coefficient at given fault node
      REAL, POINTER                          :: Mu_S(:,:) => NULL()                       !< Static friction coefficient at given fault node
      REAL, POINTER                          :: Mu_D(:,:) => NULL()                       !< Dynamic friction coefficient at given fault node

@@ -138,7 +138,7 @@ void close_vtk_writer_(long long* ref){
 }
 
 char const * const vtkWriter::Labels[] = {
-  "SRs", "SRd", "T_s", "T_d", "P_n", "u_n", "Mud", "StV", "Ts0", "Td0", "Pn0", "Sls", "Sld", "Vr", "ASl"
+  "SRs", "SRd", "T_s", "T_d", "P_n", "u_n", "Mud", "StV", "Ts0", "Td0", "Pn0", "Sls", "Sld", "Vr", "ASl", "PSR"
 };
 
 vtkWriter::vtkWriter(int rank,int iteration, const char* basename, int binaryoutput)

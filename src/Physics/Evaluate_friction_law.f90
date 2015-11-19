@@ -371,6 +371,10 @@ MODULE Eval_friction_law_mod
          CALL output_rupturefront(iBndGP,iElem,iSide,time,DISC,MESH,MPI,IO)
          DISC%DynRup%RF(iFace,iBndGP) = .FALSE.
      ENDIF
+     !idem
+     IF (LocSR.GT.DISC%DynRup%PeakSR(iFace,iBndGP)) THEN
+        DISC%DynRup%PeakSR(iFace,iBndGP) = LocSR
+     ENDIF
      !
      DISC%DynRup%Mu(iFace,iBndGP)        = LocMu
      DISC%DynRup%SlipRate1(iFace,iBndGP) = LocSR1
@@ -718,6 +722,10 @@ MODULE Eval_friction_law_mod
         DISC%DynRup%rupture_time(iFace, iBndGP)=time
         CALL output_rupturefront(iBndGP,iElem,iSide,time,DISC,MESH,MPI,IO)
         DISC%DynRup%RF(iFace,iBndGP) = .FALSE.
+     ENDIF
+     !idem
+     IF (LocSR.GT.DISC%DynRup%PeakSR(iFace,iBndGP)) THEN
+        DISC%DynRup%PeakSR(iFace,iBndGP) = LocSR
      ENDIF
      !
      DISC%DynRup%Mu(iFace,iBndGP)        = LocMu
