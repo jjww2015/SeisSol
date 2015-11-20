@@ -242,13 +242,13 @@ CONTAINS
     logInfo(*) '<--------------------------------------------------------->'
     ! 
     EQN%Dimension = 3                                                      
-    logInfo(*) 'Solve 3-dimensional equations'
+    logInfo0(*) 'Solve 3-dimensional equations'
     EQN%nvar = 9                                           
-    logInfo(*) 'Number of Variables    is ',EQN%nVar                                                    
+    logInfo0(*) 'Number of Variables    is ',EQN%nVar                                                    
     EQN%EqType = 8                                                ! equationtype 
     !                                                             ! (8=seismic wave equations)               
     !
-    logInfo(*) 'Solving evolution equation for seismic wave propagation. '
+    logInfo0(*) 'Solving evolution equation for seismic wave propagation. '
     !
     EQN%linearized = .TRUE.
     ! aheineck, @TODO these values are used, but not initialized > Begin
@@ -275,12 +275,12 @@ CONTAINS
     !
     SELECT CASE(Anisotropy)
     CASE(0)
-      logInfo(*) 'Isotropic material is assumed. '
+      logInfo0(*) 'Isotropic material is assumed. '
       EQN%Anisotropy = Anisotropy
       EQN%nBackgroundVar = 3+EQN%nBackgroundVar
       EQN%nNonZeroEV = 3
     CASE(1)
-      logInfo(*) 'Full triclinic material is assumed. '
+      logInfo0(*) 'Full triclinic material is assumed. '
       EQN%Anisotropy = Anisotropy
       EQN%nBackgroundVar = 22+EQN%nBackgroundVar
       EQN%nNonZeroEV = 3
@@ -319,18 +319,18 @@ CONTAINS
     !
     SELECT CASE(Anelasticity)
     CASE(0)
-      logInfo(*) 'No attenuation assumed. '
+      logInfo0(*) 'No attenuation assumed. '
       EQN%Anelasticity = Anelasticity
       EQN%nAneMaterialVar = 3
       EQN%nMechanisms    = 0
       EQN%nAneFuncperMech= 0
       EQN%nVarTotal = EQN%nVar                                                     !
     CASE(1)
-       logInfo(*) 'Viscoelastic attenuation assumed ... '
+       logInfo0(*) 'Viscoelastic attenuation assumed ... '
         EQN%Anelasticity = Anelasticity
          IF(EQN%Anisotropy.NE.2)   THEN
            EQN%nAneFuncperMech = 6                                                    !
-           logInfo(*) '... using ', EQN%nAneFuncperMech,' anelastic functions per Mechanism.'                                                   !
+           logInfo0(*) '... using ', EQN%nAneFuncperMech,' anelastic functions per Mechanism.'                                                   !
          ENDIF
     CASE DEFAULT
       logError(*) 'Choose 0 or 1 as anelasticity assumption. '
@@ -539,7 +539,7 @@ CONTAINS
         logInfo(*) ' mu = ', EQN%mu       ! (2)
         logInfo(*) ' lambda = ', EQN%lambda   ! (3)
       ELSE
-        logInfo(*) '| ERROR: MaterialType 12 is only used for plastic calculations.'
+        logError(*) '| MaterialType 12,30 or 121 are only used for plastic calculations.'
       ENDIF
       !
   CASE(60,61) ! special case of 1D landers example
