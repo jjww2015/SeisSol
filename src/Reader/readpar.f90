@@ -1648,7 +1648,7 @@ CONTAINS
              ! all parameters are defined in input file of INITIAL VALUES
              DISC%DynRup%inst_healing = 0
              CONTINUE
-           CASE(30) !LSW with a smoothed rupture in a circular patch, used for example in TPV29/TPV30 and TPV26/TPV27
+           CASE(30,302) !LSW with a smoothed rupture in a circular patch, used for example in TPV29/TPV30 and TPV26/TPV27
              DISC%DynRup%Mu_D_ini = Mu_D_ini
              DISC%DynRup%Mu_S_ini = Mu_S_ini
              DISC%DynRup%D_C_ini  = D_C_ini
