@@ -56,7 +56,7 @@ disp(' '),disp(' ')
 
 clear, close all;
 
-workingdir='./tp29-50/'
+workingdir='./tp29-50p/'
 prefix='tpv29-50'
 
 %evaluate nb of files and nb of time samples
@@ -84,7 +84,7 @@ nvar     = input('     Give number of variables (including time):            ');
 
 disp(' '),  disp('     Creating seismogram-processor relation ...' )
 %eval(['!ls -l ',filename,'-receiver* > tmp.dat']);
-eval(['!find -name "',filename,'*-receiver*" -size +30k | xargs ls -l >tmp.dat']);
+eval(['!find ', workingdir,' -name "',prefix,'*-receiver*" -size +30k | xargs ls -l >tmp.dat']);
 
 tmp_file = 'tmp.dat';
 fid   = fopen(tmp_file);
@@ -100,7 +100,8 @@ location(3,1:nseis) = 0;
 
 for num = 1:nseis
      
-    in_file = [filename,proc_s(num,:)];
+    %in_file = [filename,proc_s(num,:)];
+    in_file = command_result{2}{num};
     
     fid   = fopen(in_file);
     junk  = fgetl(fid); junk  = fgetl(fid); 
