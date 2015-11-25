@@ -64,8 +64,8 @@ disp(' '),  disp('     Read data...' )
 
 % read in data
 %workingdir='/home/ulrich/WorkingDirSeissol/RESULTS31c2m100a2/'
-workingdir='./tp29-50/'
-prefix='tpv29-50'
+workingdir='./tp29-50p/'
+prefix='tpv29-50p'
 %Ssearch = sprintf('%s%s',workingdir,'*-RF-*');
 Ssearch = sprintf('%s%s%s',workingdir,prefix,'-RF-*');
 liste=dir(Ssearch);

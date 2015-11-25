@@ -55,7 +55,7 @@ disp(' '),disp(' ')
 clear, close all;
 %filename = input('     Specify root-filename (typically: **file**-pickpoints-, without the -):  ','s');
 
-workingdir='./tp29-50/'
+workingdir='./tp29-50p/'
 prefix='tpv29-50'
 
 %evaluate nb of files and nb of time samples
@@ -159,7 +159,7 @@ for num = 1:nseis
     %data(:,1) = (round(data(:,1)*1000000))/1000000;
     %[tmp,k,kk] = unique(data(:,1));
     %data  = data(k,:);
-    disp(sprintf('\n Samples in seismogram nr. %i\t:   %i', num,size(data,1)));
+    disp(sprintf('\n Samples in seismogram nr. %i\t(%s):   %i', num,in_file,size(data,1)));
     MATLAB_OUTPUT(:,:,num) = data;
     location(:,num) = [x1; x2; x3];
     backgroundstress(:,num) = [P_0; T_s; T_d];
