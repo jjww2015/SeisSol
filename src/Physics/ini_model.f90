@@ -578,6 +578,52 @@ CONTAINS
 
         ENDDO
 
+      CASE(119) !New Rough Fault : homogenous stress and Plasticity 
+         !b11 = 1.025837D0
+         !b33 = 0.974162D0
+         !b13 =-0.158649D0
+  !0.8
+  b11 = 1.0296d0
+  b33 = 0.9704d0
+  b13 =-0.1643d0
+  !0.7
+  b11 = 1.0285d0
+  b33 = 0.9715d0
+  b13 =-0.1584d0
+         g = 9.8D0    
+
+        MaterialVal(:,1) = EQN%rho0
+        MaterialVal(:,2) = EQN%mu
+        MaterialVal(:,3) = EQN%lambda
+        ! Initialisation of IniStress(6 stress components in 3D)
+        !
+        ALLOCATE(EQN%IniStress(6,MESH%nElem))
+                 EQN%IniStress(:,:)=0.0D0
+
+        DO iElem=1, MESH%nElem
+
+                z = MESH%ELEM%xyBary(3,iElem) !average depth inside an element
+
+          IF (z.GE.-17000.0D0) THEN
+              Omega = 1D0
+          ELSEIF (z.GE.-22000D0) THEN
+              Omega = (z+22000D0)/5000D0
+          ELSE
+              Omega = 0D0
+          ENDIF
+          Pf = 0000D0 * g * z
+          EQN%IniStress(3,iElem) = 2670d0*g*-10e3
+          EQN%IniStress(1,iElem) =  Omega*(b11*(EQN%IniStress(3,iElem)+Pf)-Pf)+(1d0-Omega)*EQN%IniStress(3,iElem)
+          EQN%IniStress(2,iElem) =  Omega*(b33*(EQN%IniStress(3,iElem)+Pf)-Pf)+(1d0-Omega)*EQN%IniStress(3,iElem)
+          EQN%IniStress(4,iElem)  =  Omega*(b13*(EQN%IniStress(3,iElem)+Pf))
+          EQN%IniStress(5,iElem)  = 0.0  
+          EQN%IniStress(6,iElem)  = 0.0  
+          EQN%IniStress(1,iElem)  =   EQN%IniStress(1,iElem) + Pf
+          EQN%IniStress(2,iElem)  =   EQN%IniStress(2,iElem) + Pf
+          EQN%IniStress(3,iElem)  =   EQN%IniStress(3,iElem) + Pf
+
+        ENDDO
+
       CASE(121) !DIP10 : diping fault, 10 deg dip
 
          ! R = 0.5
