@@ -624,6 +624,27 @@ CONTAINS
 
         ENDDO
 
+      CASE(33)     ! T. Ulrich TPV33 14.01.16
+        DO iElem = 1, MESH%nElem
+           !iLayer = MESH%ELEM%Reference(0,iElem)        ! Zone number is given by reference 0 
+           y = MESH%ELEM%xyBary(2,iElem) !average y inside an element
+           IF(y.LT.-800d0) THEN                         ! zone -800
+               MaterialVal(iElem,1) = 2670. 
+               MaterialVal(iElem,2) = 2.816717568E+10
+               MaterialVal(iElem,3) = 2.817615756E+10
+           ELSEIF ((y.GE.-800d0).AND.(y.LE.800d0)) THEN                     ! zone central
+               MaterialVal(iElem,1) = 2670. 
+               MaterialVal(iElem,2) = 1.251489075E+10
+               MaterialVal(iElem,3) = 1.251709350E+10
+           ELSEIF(y.GT.800d0) THEN                                          ! zone + 800
+               MaterialVal(iElem,1) = 2670. 
+               MaterialVal(iElem,2) = 3.203812032E+10
+               MaterialVal(iElem,3) = 3.204375936E+10
+           ELSE
+              logError(*) iLayer, ":zone (region) unknown"
+           ENDIF
+        ENDDO
+
       CASE(121) !DIP10 : diping fault, 10 deg dip
 
          ! R = 0.5
