@@ -1864,7 +1864,7 @@ MODULE ini_model_DR_mod
   REAL                           :: xV(MESH%GlobalVrtxType),yV(MESH%GlobalVrtxType),zV(MESH%GlobalVrtxType)
   REAL                           :: chi,tau
   REAL                           :: xi, eta, zeta, XGp, YGp, ZGp
-  REAL                           :: b11, b33, b13, Omega, g, Pf, zIncreasingCohesion
+  REAL                           :: b11, b33, b13, Omega, g, Pf, zIncreasingCohesion, Rx, Rz
   !-------------------------------------------------------------------------! 
   INTENT(IN)    :: MESH, BND 
   INTENT(INOUT) :: DISC,EQN
@@ -1935,19 +1935,35 @@ MODULE ini_model_DR_mod
           tau  = MESH%ELEM%BndGP_Tri(2,iBndGP)
           CALL TrafoChiTau2XiEtaZeta(xi,eta,zeta,chi,tau,iSide,0)
           CALL TetraTrafoXiEtaZeta2XYZ(xGP,yGP,zGP,xi,eta,zeta,xV,yV,zV)
-      
+
+          IF (xGP.LT.-19000D0) THEN
+             Rx = (-xGp - 19000D0)/5e3
+          ELSEIF (xGP.GT.19000D0) THEN
+             Rx = (xGp - 19000D0)/5e3
+          ELSE
+             Rx = 0.
+          ENDIF
+
+          IF (zGP.LT.-19000D0) THEN
+             Rz = (-zGp - 19000D0)/5e3
+          ELSE
+             Rz = 0.
+          ENDIF
+          Omega = 1d0-min(1D0,dsqrt(Rx**2+Rz**2))
+     
           ! for possible variation
           !DISC%DynRup%D_C(i,iBndGP)  = DISC%DynRup%D_C_ini
           !DISC%DynRup%Mu_S(i,iBndGP) = DISC%DynRup%Mu_S_ini
           !DISC%DynRup%Mu_D(i,iBndGP) = DISC%DynRup%Mu_D_ini
           !
-          IF (zGP.GE.-19000.0D0) THEN
-              Omega = 1D0
-          ELSEIF (zGP.GE.-21000D0) THEN
-              Omega = (zGP+21000D0)/2000D0
-          ELSE
-              Omega = 0D0
-          ENDIF
+          !IF (zGP.GE.-19000.0D0) THEN
+          !    Omega = 1D0
+          !ELSEIF (zGP.GE.-24000D0) THEN
+          !    Omega = (zGP+24000D0)/5000D0
+          !ELSE
+          !    Omega = 0D0
+          !ENDIF
+
           Pf = 0000D0 * g * zGP
           
           EQN%IniBulk_zz(i,iBndGP)  =  2670d0*g*-10e3

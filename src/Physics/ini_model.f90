@@ -123,7 +123,7 @@ CONTAINS
     REAL                            :: material(1:3), MaterialVal_k
     REAL                            :: ZoneIns, ZoneTrans, xG, yG, X2, LocX(3), LocY(3), tmp
     REAL                            :: BedrockVelModel(7,4)
-    REAL                            :: b11, b22, b33, b13, b23, b12, g, Pf
+    REAL                            :: b11, b22, b33, b13, b23, b12, g, Pf, Rx, Rz
     INTEGER                         :: eType
     INTEGER         :: nTens3GP
     REAL,POINTER    :: Tens3GaussP(:,:)
@@ -602,15 +602,32 @@ CONTAINS
 
         DO iElem=1, MESH%nElem
 
+                x = MESH%ELEM%xyBary(1,iElem) 
                 z = MESH%ELEM%xyBary(3,iElem) !average depth inside an element
 
-          IF (z.GE.-17000.0D0) THEN
-              Omega = 1D0
-          ELSEIF (z.GE.-22000D0) THEN
-              Omega = (z+22000D0)/5000D0
+          IF (x.LT.-19000D0) THEN
+             Rx = (-x - 19000D0)/5e3
+          ELSEIF (x.GT.19000D0) THEN
+             Rx = (x - 19000D0)/5e3
           ELSE
-              Omega = 0D0
+             Rx = 0.
           ENDIF
+
+          IF (z.LT.-19000D0) THEN
+             Rz = (-z - 19000D0)/5e3
+          ELSE
+             Rz = 0.
+          ENDIF
+          Omega = 1d0-min(1D0,dsqrt(Rx**2+Rz**2))
+
+
+          !IF (z.GE.-17000.0D0) THEN
+          !    Omega = 1D0
+          !ELSEIF (z.GE.-22000D0) THEN
+          !    Omega = (z+22000D0)/5000D0
+          !ELSE
+          !    Omega = 0D0
+          !ENDIF
           Pf = 0000D0 * g * z
           EQN%IniStress(3,iElem) = 2670d0*g*-10e3
           EQN%IniStress(1,iElem) =  Omega*(b11*(EQN%IniStress(3,iElem)+Pf)-Pf)+(1d0-Omega)*EQN%IniStress(3,iElem)
