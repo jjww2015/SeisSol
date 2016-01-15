@@ -55,8 +55,8 @@ disp(' '),disp(' ')
 clear, close all;
 %filename = input('     Specify root-filename (typically: **file**-pickpoints-, without the -):  ','s');
 
-workingdir='./tp29-50p/'
-prefix='tpv29-50'
+workingdir='./tpv33/'
+prefix='tpv33'
 
 %evaluate nb of files and nb of time samples
 %do not consider files with only header

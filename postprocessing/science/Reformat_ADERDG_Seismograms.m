@@ -56,8 +56,8 @@ disp(' '),disp(' ')
 
 clear, close all;
 
-workingdir='./tp29-50p/'
-prefix='tpv29-50'
+workingdir='./tpv33/'
+prefix='tpv33'
 
 %evaluate nb of files and nb of time samples
 %do not consider files with only header
