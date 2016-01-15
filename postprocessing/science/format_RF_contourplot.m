@@ -66,7 +66,7 @@ disp('temporaire Y up')
 tmp(2,:)=abs(tmp(2,:)); 
 
 disp('Reduce data by a factor of 4 to match the max allowed file size!')
-RF=tmp(:,1:4:end);
+RF=tmp(:,1:1:end);
 clear tmp;
 
 
@@ -83,17 +83,20 @@ str3 = date;
 
 % open file
 disp('Save file...')
-fid=fopen('cplot.dat','w');
+fid=fopen('/export/data/ulrich/cplot.dat','w');
 
-fprintf(fid,'# problem=TPV29\n');
+fprintf(fid,'# problem=TPV33\n');
 fprintf(fid,'# author=Thomas ULRICH\n');
 fprintf(fid,['# date=',str3,'\n']);
 fprintf(fid,'# code=SeisSol (ADER-DG)\n');
 %printf(fid,'# Background stress is assigned to a complete element determined by its geometrical barycenter\n');
 fprintf(fid,'# Background stress is assigned to each individual Gaussian integation point (GP)\n');    
-fprintf(fid,'# element_size=50 m on fault 5000m far away Growth rate 1.15\n');
-fprintf(fid,'# 8,40e6 tetra elements\n');
-fprintf(fid,'# order of approximation in space and time= O3\n');
+%fprintf(fid,'# element_size=50 m on fault 5000m far away Growth rate 1.15\n');
+%fprintf(fid,'# 8,40e6 tetra elements\n');
+fprintf(fid,'# element_size=100 m on fault 5000m far away Growth rate 1.10\n');
+%    fprintf(fid,'# 0,44e6 tetra elements\n');
+fprintf(fid,'# 1,5e6 tetra elements\n');
+fprintf(fid,'# order of approximation in space and time= O5\n');
 fprintf(fid,'# Column #1 = horizontal coordinate, distance along strike (m)\n');
 fprintf(fid,'# Column #2 = vertical coordinate, distance down-dip (m)\n');
 fprintf(fid,'# Column #3 = rupture time (s)\n');
