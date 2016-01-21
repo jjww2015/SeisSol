@@ -1949,7 +1949,7 @@ MODULE ini_model_DR_mod
           ELSE
              Rz = 0.
           ENDIF
-          Omega = 1d0-min(1D0,dsqrt(Rx**2+Rz**2))
+          Omega = 1d0-min(1D0,sqrt(Rx**2+Rz**2))
      
           ! for possible variation
           !DISC%DynRup%D_C(i,iBndGP)  = DISC%DynRup%D_C_ini
@@ -1966,7 +1966,7 @@ MODULE ini_model_DR_mod
 
           Pf = 0000D0 * g * zGP
           
-          EQN%IniBulk_zz(i,iBndGP)  =  2670d0*g*-10e3
+          EQN%IniBulk_zz(i,iBndGP)  =  2670d0*g*(-10e3)
           EQN%IniBulk_xx(i,iBndGP)  =  Omega*(b11*(EQN%IniBulk_zz(i,iBndGP)+Pf)-Pf)+(1d0-Omega)*EQN%IniBulk_zz(i,iBndGP)
           EQN%IniBulk_yy(i,iBndGP)  =  Omega*(b33*(EQN%IniBulk_zz(i,iBndGP)+Pf)-Pf)+(1d0-Omega)*EQN%IniBulk_zz(i,iBndGP)
           EQN%IniShearXY(i,iBndGP)  =  Omega*(b13*(EQN%IniBulk_zz(i,iBndGP)+Pf))
@@ -2555,7 +2555,7 @@ MODULE ini_model_DR_mod
           ELSE
              Rz = 0.
           ENDIF
-          Rt = min(1D0,dsqrt(Rx**2+Rz**2))
+          Rt = min(1D0,sqrt(Rx**2+Rz**2))
 
           EQN%IniBulk_xx(i,iBndGP)  = -60d6
           EQN%IniBulk_yy(i,iBndGP)  = -60d6
