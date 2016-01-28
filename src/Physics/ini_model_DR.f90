@@ -1864,7 +1864,7 @@ MODULE ini_model_DR_mod
   REAL                           :: xV(MESH%GlobalVrtxType),yV(MESH%GlobalVrtxType),zV(MESH%GlobalVrtxType)
   REAL                           :: chi,tau
   REAL                           :: xi, eta, zeta, XGp, YGp, ZGp
-  REAL                           :: b11, b33, b13, Omega, g, Pf, zIncreasingCohesion, Rx, Rz
+  REAL                           :: b11, b33, b13, Omega, g, Pf, zIncreasingCohesion, Rx, Ry, Rz
   !-------------------------------------------------------------------------! 
   INTENT(IN)    :: MESH, BND 
   INTENT(INOUT) :: DISC,EQN
@@ -2145,7 +2145,7 @@ MODULE ini_model_DR_mod
   INTEGER                        :: MPIIndex, iObject
   REAL                           :: xV(MESH%GlobalVrtxType),yV(MESH%GlobalVrtxType),zV(MESH%GlobalVrtxType)
   REAL                           :: chi,tau
-  REAL                           :: xi, eta, zeta, XGp, YGp, ZGp
+  REAL                           :: xi, eta, zeta, XGp, YGp, ZGp, Rx, Ry, Rz
   REAL                           :: b11, b22, b12, b13, b23, Omega, g, Pf, zIncreasingCohesion
   !-------------------------------------------------------------------------! 
   INTENT(IN)    :: MESH, BND 
@@ -2211,8 +2211,15 @@ MODULE ini_model_DR_mod
   b13 = 0.2147
   b23 = 0.0000
 
+  ! R = 0.55 DIP 20 (zhypo = 22.5e3, ie 25e3 taking into account the 2.5e3 water)
+  b11 = 1.5660
+  b22 = 1.2830
+  b12 = 0.0000
+  b13 = 0.1859
+  b23 = 0.0000
+
   g = 9.8D0    
-  zIncreasingCohesion = -5000.
+  zIncreasingCohesion = -10000.
   ! Loop over every mesh element
   DO i = 1, MESH%Fault%nSide
        
@@ -2271,17 +2278,28 @@ MODULE ini_model_DR_mod
           !DISC%DynRup%Mu_D(i,iBndGP) = DISC%DynRup%Mu_D_ini
           !
 
-          IF (zGP.GE.-45000.0D0) THEN
-              Omega = 1D0
-          ELSEIF (zGP.GE.-50000D0) THEN
-              Omega = (zGP+50000D0)/5000D0
+          IF (yGP.LT.-68000D0) THEN
+             Ry = (-yGp - 68000D0)/20e3
+          ELSEIF (yGP.GT.68000D0) THEN
+             Ry = (yGp - 68000D0)/20e3
           ELSE
-              Omega = 0D0
+             Ry = 0.
           ENDIF
+
+          IF (zGP.LT.-45000D0) THEN
+             Rz = (-zGp - 45000D0)/20e3
+          ! For z close to 0, we play with the cohesion
+          !ELSEIF (zGP.GT.-10000D0) THEN
+          !   Rz = (zGp + 10000D0)/20e3
+          ELSE
+             Rz = 0.
+          ENDIF
+
+          Omega = max(0D0,1D0-sqrt(Ry**2+Rz**2))
 
           Pf = -1000D0 * g * zGP
 
-          EQN%IniBulk_zz(i,iBndGP)  =  2670d0*g*zGP - 1000D0 * g * 2500d0
+          EQN%IniBulk_zz(i,iBndGP)  =  2670d0*g*zGP 
           EQN%IniBulk_xx(i,iBndGP)  =  Omega*(b11*(EQN%IniBulk_zz(i,iBndGP)+Pf)-Pf)+(1d0-Omega)*EQN%IniBulk_zz(i,iBndGP)
           EQN%IniBulk_yy(i,iBndGP)  =  Omega*(b22*(EQN%IniBulk_zz(i,iBndGP)+Pf)-Pf)+(1d0-Omega)*EQN%IniBulk_zz(i,iBndGP)
           EQN%IniShearXY(i,iBndGP)  =  Omega*(b12*(EQN%IniBulk_zz(i,iBndGP)+Pf))
@@ -2294,7 +2312,7 @@ MODULE ini_model_DR_mod
           ! manage cohesion
           IF (zGP.GE.zIncreasingCohesion) THEN
               ! higher cohesion near free surface
-              DISC%DynRup%cohesion(i,iBndGP) = -0.4d6-0.8d6*(zGP-zIncreasingCohesion)/(-zIncreasingCohesion)
+              DISC%DynRup%cohesion(i,iBndGP) = -0.4d6-8.0d6*(zGP-zIncreasingCohesion)/(-zIncreasingCohesion)
           ELSE
               ! set cohesion
               DISC%DynRup%cohesion(i,iBndGP) = -0.4d6
