@@ -618,7 +618,7 @@ CONTAINS
           ELSE
              Rz = 0.
           ENDIF
-          Omega = 1d0-min(1D0,dsqrt(Rx**2+Rz**2))
+          Omega = 1d0-min(1D0,sqrt(Rx**2+Rz**2))
 
 
           !IF (z.GE.-17000.0D0) THEN
@@ -629,7 +629,7 @@ CONTAINS
           !    Omega = 0D0
           !ENDIF
           Pf = 0000D0 * g * z
-          EQN%IniStress(3,iElem) = 2670d0*g*-10e3
+          EQN%IniStress(3,iElem) = 2670d0*g*(-10e3)
           EQN%IniStress(1,iElem) =  Omega*(b11*(EQN%IniStress(3,iElem)+Pf)-Pf)+(1d0-Omega)*EQN%IniStress(3,iElem)
           EQN%IniStress(2,iElem) =  Omega*(b33*(EQN%IniStress(3,iElem)+Pf)-Pf)+(1d0-Omega)*EQN%IniStress(3,iElem)
           EQN%IniStress(4,iElem)  =  Omega*(b13*(EQN%IniStress(3,iElem)+Pf))
