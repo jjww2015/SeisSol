@@ -148,6 +148,9 @@ CONTAINS
     
     REAL, POINTER                   :: iMassMatrix(:,:) => NULL()             ! Pointer to the corresponding mass matrix
     INTEGER                         :: LocElemType                            ! Type of element
+
+    INTEGER :: fid, i1, j1
+    REAL, ALLOCATABLE :: x1(:), y1(:), LocalStressGrid(:,:,:)
     
     INTEGER                         :: InterpolationScheme = 1                ! Select the interpolation scheme (linear=1, cubic=else)
     !--------------------------------------------------------------------------
@@ -540,6 +543,7 @@ CONTAINS
               ENDIF
         ENDDO
         !
+
       CASE(30) !TPV29-30 : Plasticity and fault roughness
          b11 = 1.025837D0
          b33 = 0.974162D0
@@ -582,15 +586,15 @@ CONTAINS
          !b11 = 1.025837D0
          !b33 = 0.974162D0
          !b13 =-0.158649D0
-  !0.8
-  b11 = 1.0296d0
-  b33 = 0.9704d0
-  b13 =-0.1643d0
-  !0.7
-  b11 = 1.0285d0
-  b33 = 0.9715d0
-  b13 =-0.1584d0
-         g = 9.8D0    
+        !0.8
+        b11 = 1.0296d0
+        b33 = 0.9704d0
+        b13 =-0.1643d0
+        !0.7
+        b11 = 1.0285d0
+        b33 = 0.9715d0
+        b13 =-0.1584d0
+        g = 9.8D0    
 
         MaterialVal(:,1) = EQN%rho0
         MaterialVal(:,2) = EQN%mu
@@ -598,7 +602,7 @@ CONTAINS
         ! Initialisation of IniStress(6 stress components in 3D)
         !
         ALLOCATE(EQN%IniStress(6,MESH%nElem))
-                 EQN%IniStress(:,:)=0.0D0
+        EQN%IniStress(:,:)=0.0D0
 
         DO iElem=1, MESH%nElem
 
@@ -638,6 +642,63 @@ CONTAINS
           EQN%IniStress(1,iElem)  =   EQN%IniStress(1,iElem) + Pf
           EQN%IniStress(2,iElem)  =   EQN%IniStress(2,iElem) + Pf
           EQN%IniStress(3,iElem)  =   EQN%IniStress(3,iElem) + Pf
+
+        ENDDO
+
+      CASE(1191) !New Rough Fault : heterogenous stress, to be used with Planar fault 
+
+        fid = 96123
+        OPEN(fid,FILE='LocalStressGrid.dat')
+        READ(fid,'(I)') nx
+        ALLOCATE(x1(nx))
+        DO i = 1, nx
+           READ(fid,'(E)') x1(i)
+        ENDDO
+        READ(fid,'(I)') ny
+        ALLOCATE(y1(ny))
+        DO i = 1, ny
+           READ(fid,'(E)') y1(i)
+        ENDDO
+        ALLOCATE(LocalStressGrid(nx,ny,3))
+        DO i = 1, nx
+           DO j = 1, ny
+             READ(fid,'(E)') LocalStressGrid(i,j,1)
+             READ(fid,'(E)') LocalStressGrid(i,j,2)
+             READ(fid,'(E)') LocalStressGrid(i,j,3)
+           ENDDO
+        ENDDO
+        CLOSE(fid)
+
+        MaterialVal(:,1) = EQN%rho0
+        MaterialVal(:,2) = EQN%mu
+        MaterialVal(:,3) = EQN%lambda
+        ! Initialisation of IniStress(6 stress components in 3D)
+        !
+        ALLOCATE(EQN%IniStress(6,MESH%nElem))
+        EQN%IniStress(:,:)=0.0D0
+
+        DO iElem=1, MESH%nElem
+
+                x = MESH%ELEM%xyBary(1,iElem) 
+                z = MESH%ELEM%xyBary(3,iElem) !average depth inside an element
+          DO i1=1,nx
+             if (x1(i1).GE.x) THEN
+                EXIT
+             ENDIF
+          ENDDO
+          DO j1=1,ny
+             if (y1(j1).LE.z) THEN
+                EXIT
+             ENDIF
+          ENDDO
+
+          EQN%IniStress(1,iElem)  =  0D0
+          EQN%IniStress(2,iElem) =  LocalStressGrid(i1,j1,1)
+          EQN%IniStress(3,iElem) =  0D0
+          EQN%IniStress(4,iElem)  =  LocalStressGrid(i1,j1,2)
+          EQN%IniStress(5,iElem)  =  0D0
+          EQN%IniStress(6,iElem)  =  LocalStressGrid(i1,j1,3)
+ 
 
         ENDDO
 
