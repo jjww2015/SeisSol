@@ -659,16 +659,19 @@ CONTAINS
         DO i = 1, ny
            READ(fid,'(E)') y1(i)
         ENDDO
-        ALLOCATE(LocalStressGrid(nx,ny,3))
+        ALLOCATE(LocalStressGrid(nx,ny,6))
         DO i = 1, nx
            DO j = 1, ny
              READ(fid,'(E)') LocalStressGrid(i,j,1)
              READ(fid,'(E)') LocalStressGrid(i,j,2)
              READ(fid,'(E)') LocalStressGrid(i,j,3)
+             READ(fid,'(E)') LocalStressGrid(i,j,4)
+             READ(fid,'(E)') LocalStressGrid(i,j,5)
+             READ(fid,'(E)') LocalStressGrid(i,j,6)
            ENDDO
         ENDDO
         CLOSE(fid)
-
+        logError(*) "all file read"
         MaterialVal(:,1) = EQN%rho0
         MaterialVal(:,2) = EQN%mu
         MaterialVal(:,3) = EQN%lambda
@@ -691,16 +694,14 @@ CONTAINS
                 EXIT
              ENDIF
           ENDDO
-
-          EQN%IniStress(1,iElem)  =  0D0
-          EQN%IniStress(2,iElem) =  LocalStressGrid(i1,j1,1)
-          EQN%IniStress(3,iElem) =  0D0
-          EQN%IniStress(4,iElem)  =  LocalStressGrid(i1,j1,2)
-          EQN%IniStress(5,iElem)  =  0D0
-          EQN%IniStress(6,iElem)  =  LocalStressGrid(i1,j1,3)
- 
-
+          EQN%IniStress(1,iElem) = LocalStressGrid(i1,j1,1)
+          EQN%IniStress(2,iElem) = LocalStressGrid(i1,j1,2)
+          EQN%IniStress(3,iElem) = LocalStressGrid(i1,j1,3)
+          EQN%IniStress(4,iElem) = LocalStressGrid(i1,j1,4)
+          EQN%IniStress(5,iElem) = LocalStressGrid(i1,j1,5)
+          EQN%IniStress(6,iElem) = LocalStressGrid(i1,j1,6)
         ENDDO
+        DEALLOCATE(LocalStressGrid)
 
       CASE(33)     ! T. Ulrich TPV33 14.01.16
         DO iElem = 1, MESH%nElem

@@ -2046,12 +2046,15 @@ MODULE ini_model_DR_mod
   DO i = 1, ny
      READ(fid,'(E)') y1(i)
   ENDDO
-  ALLOCATE(LocalStressGrid(nx,ny,3))
+  ALLOCATE(LocalStressGrid(nx,ny,6))
   DO i = 1, nx
      DO j = 1, ny
           READ(fid,'(E)') LocalStressGrid(i,j,1)
           READ(fid,'(E)') LocalStressGrid(i,j,2)
           READ(fid,'(E)') LocalStressGrid(i,j,3)
+          READ(fid,'(E)') LocalStressGrid(i,j,4)
+          READ(fid,'(E)') LocalStressGrid(i,j,5)
+          READ(fid,'(E)') LocalStressGrid(i,j,6)
      ENDDO
   ENDDO
   CLOSE(fid)
@@ -2118,12 +2121,12 @@ MODULE ini_model_DR_mod
              ENDIF
           ENDDO
 
-          EQN%IniBulk_xx(i,iBndGP)  =  0D0
-          EQN%IniBulk_yy(i,iBndGP)  =  LocalStressGrid(i1,j1,1)
-          EQN%IniBulk_zz(i,iBndGP)  =  0D0
-          EQN%IniShearXY(i,iBndGP)  =  LocalStressGrid(i1,j1,2)
-          EQN%IniShearXZ(i,iBndGP)  =  0D0
-          EQN%IniShearYZ(i,iBndGP)  =  LocalStressGrid(i1,j1,3)
+          EQN%IniBulk_xx(i,iBndGP)  =  LocalStressGrid(i1,j1,1)
+          EQN%IniBulk_yy(i,iBndGP)  =  LocalStressGrid(i1,j1,2)
+          EQN%IniBulk_zz(i,iBndGP)  =  LocalStressGrid(i1,j1,3)
+          EQN%IniShearXY(i,iBndGP)  =  LocalStressGrid(i1,j1,4)
+          EQN%IniShearXZ(i,iBndGP)  =  LocalStressGrid(i1,j1,5)
+          EQN%IniShearYZ(i,iBndGP)  =  LocalStressGrid(i1,j1,6)
           !EQN%IniStateVar(i,iBndGP) =  EQN%RS_sv0
 
           ! manage cohesion
@@ -2138,6 +2141,7 @@ MODULE ini_model_DR_mod
       ENDDO ! iBndGP
                 
   ENDDO !    MESH%Fault%nSide   
+  DEALLOCATE(LocalStressGrid)
                 
   END SUBROUTINE background_NRFhetStr
 
