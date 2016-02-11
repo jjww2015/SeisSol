@@ -2125,8 +2125,8 @@ MODULE ini_model_DR_mod
           EQN%IniBulk_yy(i,iBndGP)  =  LocalStressGrid(i1,j1,2)
           EQN%IniBulk_zz(i,iBndGP)  =  LocalStressGrid(i1,j1,3)
           EQN%IniShearXY(i,iBndGP)  =  LocalStressGrid(i1,j1,4)
-          EQN%IniShearXZ(i,iBndGP)  =  LocalStressGrid(i1,j1,5)
-          EQN%IniShearYZ(i,iBndGP)  =  LocalStressGrid(i1,j1,6)
+          EQN%IniShearYZ(i,iBndGP)  =  LocalStressGrid(i1,j1,5)
+          EQN%IniShearXZ(i,iBndGP)  =  LocalStressGrid(i1,j1,6)
           !EQN%IniStateVar(i,iBndGP) =  EQN%RS_sv0
 
           ! manage cohesion
@@ -2370,6 +2370,14 @@ MODULE ini_model_DR_mod
   b12 = 0.0000
   b13 = 0.1859
   b23 = 0.0000
+
+  ! R = 0.55 DIP 20 (zhypo = 22.5e3, ie 25e3 taking into account the 2.5e3 water)
+  ! mu = 0.25 0.3
+  !b11 = 1.5770
+  !b22 = 1.2885
+  !b12 = 0.0000
+  !b13 = 0.1895
+  !b23 = 0.0000
 
   g = 9.8D0    
   zIncreasingCohesion = -10000.
