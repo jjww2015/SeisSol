@@ -417,7 +417,6 @@ MODULE ini_model_DR_mod
        IF (abs(Vs).LE.1d-6) THEN
           Vs = SQRT(EQN%mu/EQN%rho0)
        ENDIF
-
        r_crit = DISC%DynRup%R_crit
        hypox = DISC%DynRup%XHypo
        hypoy = DISC%DynRup%YHypo
@@ -2300,10 +2299,12 @@ MODULE ini_model_DR_mod
   INTEGER                        :: iSide,iElem,iBndGP
   INTEGER                        :: iLocalNeighborSide,iNeighbor
   INTEGER                        :: MPIIndex, iObject
+  INTEGER                        :: k, nLayers
   REAL                           :: xV(MESH%GlobalVrtxType),yV(MESH%GlobalVrtxType),zV(MESH%GlobalVrtxType)
   REAL                           :: chi,tau
   REAL                           :: xi, eta, zeta, XGp, YGp, ZGp, Rx, Ry, Rz
   REAL                           :: b11, b22, b12, b13, b23, Omega, g, Pf, zIncreasingCohesion
+  REAL                           :: sigzz, zLayers(20), rhoLayers(20)
   !-------------------------------------------------------------------------! 
   INTENT(IN)    :: MESH, BND 
   INTENT(INOUT) :: DISC,EQN
@@ -2377,14 +2378,29 @@ MODULE ini_model_DR_mod
 
   ! R = 0.55 DIP 20 (zhypo = 22.5e3, ie 25e3 taking into account the 2.5e3 water)
   ! mu = 0.25 0.3
-  !b11 = 1.5770
-  !b22 = 1.2885
-  !b12 = 0.0000
-  !b13 = 0.1895
-  !b23 = 0.0000
+  b11 = 1.5770
+  b22 = 1.2885
+  b12 = 0.0000
+  b13 = 0.1895
+  b23 = 0.0000
+
+  ! R = 0.55 DIP 20 (zhypo = 22.5e3, ie 25e3 taking into account the 2.5e3 water)
+  ! mu = 0.25 0.3 rho= 3375
+  b11 = 1.5767
+  b22 = 1.2883
+  b12 = 0.0000
+  b13 = 0.1894
+  b23 = 0.0000
+  ! R = 0.6 DIP 20 (zhypo = 22.5e3, ie 25e3 taking into account the 2.5e3 water)
+  ! mu = 0.25 0.3 rho= 3375
+  b11 = 1.5829
+  b22 = 1.2915
+  b12 = 0.0000
+  b13 = 0.1915
+  b23 = 0.0000
 
   g = 9.8D0    
-  zIncreasingCohesion = -10000.
+  zIncreasingCohesion = -15000.
   ! Loop over every mesh element
   DO i = 1, MESH%Fault%nSide
        
@@ -2443,16 +2459,16 @@ MODULE ini_model_DR_mod
           !DISC%DynRup%Mu_D(i,iBndGP) = DISC%DynRup%Mu_D_ini
           !
 
-          IF (yGP.LT.-68000D0) THEN
-             Ry = (-yGp - 68000D0)/20e3
-          ELSEIF (yGP.GT.68000D0) THEN
-             Ry = (yGp - 68000D0)/20e3
+          IF (yGP.LT.-65000D0) THEN
+             Ry = (-yGp - 65000D0)/40e3
+          ELSEIF (yGP.GT.65000D0) THEN
+             Ry = (yGp - 65000D0)/40e3
           ELSE
              Ry = 0.
           ENDIF
 
-          IF (zGP.LT.-45000D0) THEN
-             Rz = (-zGp - 45000D0)/20e3
+          IF (zGP.LT.-25000D0) THEN
+             Rz = (-zGp - 25000D0)/150e3
           ! For z close to 0, we play with the cohesion
           !ELSEIF (zGP.GT.-10000D0) THEN
           !   Rz = (zGp + 10000D0)/20e3
@@ -2464,7 +2480,22 @@ MODULE ini_model_DR_mod
 
           Pf = -1000D0 * g * zGP
 
-          EQN%IniBulk_zz(i,iBndGP)  =  2670d0*g*zGP 
+          ! TO BE USED WITH 1d Layered medium
+          !nLayers = 5
+          !zLayers (1:5) = (/ 0d0, -1700d0, -4000d0, -6500d0,-600d6 /)
+          !rhoLayers (1:5) = (/ 2600d0, 2900d0, 3050d0, 3375d0, 3375d0 /)
+          !sigzz = 0d0
+          !DO k=2,nLayers
+          !   IF (zGP.GT.zLayers(k)) THEN
+          !      sigzz = sigzz + rhoLayers(k-1)*(zGP-zLayers(k-1))*g
+          !   ELSE
+          !      sigzz = sigzz + rhoLayers(k-1)*(zLayers(k)-zLayers(k-1))*g
+          !   ENDIF
+          !ENDDO
+
+          sigzz = 3375d0 * g * zGP
+
+          EQN%IniBulk_zz(i,iBndGP)  =  sigzz
           EQN%IniBulk_xx(i,iBndGP)  =  Omega*(b11*(EQN%IniBulk_zz(i,iBndGP)+Pf)-Pf)+(1d0-Omega)*EQN%IniBulk_zz(i,iBndGP)
           EQN%IniBulk_yy(i,iBndGP)  =  Omega*(b22*(EQN%IniBulk_zz(i,iBndGP)+Pf)-Pf)+(1d0-Omega)*EQN%IniBulk_zz(i,iBndGP)
           EQN%IniShearXY(i,iBndGP)  =  Omega*(b12*(EQN%IniBulk_zz(i,iBndGP)+Pf))
@@ -2477,7 +2508,7 @@ MODULE ini_model_DR_mod
           ! manage cohesion
           IF (zGP.GE.zIncreasingCohesion) THEN
               ! higher cohesion near free surface
-              DISC%DynRup%cohesion(i,iBndGP) = -0.4d6-8.0d6*(zGP-zIncreasingCohesion)/(-zIncreasingCohesion)
+              DISC%DynRup%cohesion(i,iBndGP) = -0.4d6-13.0d6*(zGP-zIncreasingCohesion)/(-zIncreasingCohesion)
           ELSE
               ! set cohesion
               DISC%DynRup%cohesion(i,iBndGP) = -0.4d6
