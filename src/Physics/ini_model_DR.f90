@@ -2040,29 +2040,29 @@ MODULE ini_model_DR_mod
 
   fid = 96123
   OPEN(fid,FILE='LocalStressGrid.dat')
-  READ(fid,'(I)') nx
+  READ(fid,*) nx
   ALLOCATE(x1(nx))
   DO i = 1, nx
-     READ(fid,'(E)') x1(i)
+     READ(fid,*) x1(i)
   ENDDO
-  READ(fid,'(I)') ny
+  READ(fid,*) ny
   ALLOCATE(y1(ny))
   DO i = 1, ny
-     READ(fid,'(E)') y1(i)
+     READ(fid,*) y1(i)
   ENDDO
   !dx, dy>0 x increasing y decreasing
-  dx = x1(1) - x1(0)
-  dy = y1(0) - y1(1)
+  dx = x1(2) - x1(1)
+  dy = y1(1) - y1(2)
 
   ALLOCATE(LocalStressGrid(nx,ny,6))
   DO i = 1, nx
      DO j = 1, ny
-          READ(fid,'(E)') LocalStressGrid(i,j,1)
-          READ(fid,'(E)') LocalStressGrid(i,j,2)
-          READ(fid,'(E)') LocalStressGrid(i,j,3)
-          READ(fid,'(E)') LocalStressGrid(i,j,4)
-          READ(fid,'(E)') LocalStressGrid(i,j,5)
-          READ(fid,'(E)') LocalStressGrid(i,j,6)
+          READ(fid,*) LocalStressGrid(i,j,1)
+          READ(fid,*) LocalStressGrid(i,j,2)
+          READ(fid,*) LocalStressGrid(i,j,3)
+          READ(fid,*) LocalStressGrid(i,j,4)
+          READ(fid,*) LocalStressGrid(i,j,5)
+          READ(fid,*) LocalStressGrid(i,j,6)
      ENDDO
   ENDDO
   CLOSE(fid)
@@ -2128,8 +2128,8 @@ MODULE ini_model_DR_mod
                 EXIT
              ENDIF
           ENDDO
-          if ((i1.EQ.0) .OR. (j1.EQ.0)) THEN
-             logError(*) "i1 or j1 =0"
+          if ((i1.EQ.1) .OR. (j1.EQ.1)) THEN
+             logError(*) "i1 or j1 =1"
              logError(*) i1,j1, x1(i1),y1(j1), xGP, zGP
           ENDIF
           ax = (xGP-x1(i1-1))/dx
