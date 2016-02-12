@@ -645,64 +645,6 @@ CONTAINS
 
         ENDDO
 
-      CASE(1191) !New Rough Fault : heterogenous stress, to be used with Planar fault 
-
-        fid = 96123
-        OPEN(fid,FILE='LocalStressGrid.dat')
-        READ(fid,'(I)') nx
-        ALLOCATE(x1(nx))
-        DO i = 1, nx
-           READ(fid,'(E)') x1(i)
-        ENDDO
-        READ(fid,'(I)') ny
-        ALLOCATE(y1(ny))
-        DO i = 1, ny
-           READ(fid,'(E)') y1(i)
-        ENDDO
-        ALLOCATE(LocalStressGrid(nx,ny,6))
-        DO i = 1, nx
-           DO j = 1, ny
-             READ(fid,'(E)') LocalStressGrid(i,j,1)
-             READ(fid,'(E)') LocalStressGrid(i,j,2)
-             READ(fid,'(E)') LocalStressGrid(i,j,3)
-             READ(fid,'(E)') LocalStressGrid(i,j,4)
-             READ(fid,'(E)') LocalStressGrid(i,j,5)
-             READ(fid,'(E)') LocalStressGrid(i,j,6)
-           ENDDO
-        ENDDO
-        CLOSE(fid)
-        logError(*) "all file read"
-        MaterialVal(:,1) = EQN%rho0
-        MaterialVal(:,2) = EQN%mu
-        MaterialVal(:,3) = EQN%lambda
-        ! Initialisation of IniStress(6 stress components in 3D)
-        !
-        ALLOCATE(EQN%IniStress(6,MESH%nElem))
-        EQN%IniStress(:,:)=0.0D0
-
-        DO iElem=1, MESH%nElem
-
-                x = MESH%ELEM%xyBary(1,iElem) 
-                z = MESH%ELEM%xyBary(3,iElem) !average depth inside an element
-          DO i1=1,nx
-             if (x1(i1).GE.x) THEN
-                EXIT
-             ENDIF
-          ENDDO
-          DO j1=1,ny
-             if (y1(j1).LE.z) THEN
-                EXIT
-             ENDIF
-          ENDDO
-          EQN%IniStress(1,iElem) = LocalStressGrid(i1,j1,1)
-          EQN%IniStress(2,iElem) = LocalStressGrid(i1,j1,2)
-          EQN%IniStress(3,iElem) = LocalStressGrid(i1,j1,3)
-          EQN%IniStress(4,iElem) = LocalStressGrid(i1,j1,4)
-          EQN%IniStress(5,iElem) = LocalStressGrid(i1,j1,5)
-          EQN%IniStress(6,iElem) = LocalStressGrid(i1,j1,6)
-        ENDDO
-        DEALLOCATE(LocalStressGrid)
-
       CASE(33)     ! T. Ulrich TPV33 14.01.16
         DO iElem = 1, MESH%nElem
            !iLayer = MESH%ELEM%Reference(0,iElem)        ! Zone number is given by reference 0 

@@ -2025,6 +2025,7 @@ MODULE ini_model_DR_mod
   REAL                           :: b11, b33, b13, Omega, g, Pf, zIncreasingCohesion, Rx, Ry, Rz
   INTEGER :: nx,ny,fid, i1, j1
   REAL, ALLOCATABLE :: x1(:), y1(:), LocalStressGrid(:,:,:)
+  REAL                           :: ax,ay,dx,dy
 
   !-------------------------------------------------------------------------! 
   INTENT(IN)    :: MESH, BND 
@@ -2049,6 +2050,10 @@ MODULE ini_model_DR_mod
   DO i = 1, ny
      READ(fid,'(E)') y1(i)
   ENDDO
+  !dx, dy>0 x increasing y decreasing
+  dx = x1(1) - x1(0)
+  dy = y1(0) - y1(1)
+
   ALLOCATE(LocalStressGrid(nx,ny,6))
   DO i = 1, nx
      DO j = 1, ny
@@ -2123,13 +2128,19 @@ MODULE ini_model_DR_mod
                 EXIT
              ENDIF
           ENDDO
+          if ((i1.EQ.0) .OR. (j1.EQ.0)) THEN
+             logError(*) "i1 or j1 =0"
+             logError(*) i1,j1, x1(i1),y1(j1), xGP, zGP
+          ENDIF
+          ax = (xGP-x1(i1-1))/dx
+          ay = (y1(j1-1)-zGP)/dy
 
-          EQN%IniBulk_xx(i,iBndGP)  =  LocalStressGrid(i1,j1,1)
-          EQN%IniBulk_yy(i,iBndGP)  =  LocalStressGrid(i1,j1,2)
-          EQN%IniBulk_zz(i,iBndGP)  =  LocalStressGrid(i1,j1,3)
-          EQN%IniShearXY(i,iBndGP)  =  LocalStressGrid(i1,j1,4)
-          EQN%IniShearYZ(i,iBndGP)  =  LocalStressGrid(i1,j1,5)
-          EQN%IniShearXZ(i,iBndGP)  =  LocalStressGrid(i1,j1,6)
+          EQN%IniBulk_xx(i,iBndGP)  =  ax*ay*LocalStressGrid(i1,j1,1) + (1d0-ax)*ay*LocalStressGrid(i1-1,j1,1) + ax*(1d0-ay)*LocalStressGrid(i1,j1-1,1) + (1d0-ax)*(1d0-ay)*LocalStressGrid(i1-1,j1-1,1)
+          EQN%IniBulk_yy(i,iBndGP)  =  ax*ay*LocalStressGrid(i1,j1,2) + (1d0-ax)*ay*LocalStressGrid(i1-1,j1,2) + ax*(1d0-ay)*LocalStressGrid(i1,j1-1,2) + (1d0-ax)*(1d0-ay)*LocalStressGrid(i1-1,j1-1,2)
+          EQN%IniBulk_zz(i,iBndGP)  =  ax*ay*LocalStressGrid(i1,j1,3) + (1d0-ax)*ay*LocalStressGrid(i1-1,j1,3) + ax*(1d0-ay)*LocalStressGrid(i1,j1-1,3) + (1d0-ax)*(1d0-ay)*LocalStressGrid(i1-1,j1-1,3)
+          EQN%IniShearXY(i,iBndGP)  =  ax*ay*LocalStressGrid(i1,j1,4) + (1d0-ax)*ay*LocalStressGrid(i1-1,j1,4) + ax*(1d0-ay)*LocalStressGrid(i1,j1-1,4) + (1d0-ax)*(1d0-ay)*LocalStressGrid(i1-1,j1-1,4)
+          EQN%IniShearYZ(i,iBndGP)  =  ax*ay*LocalStressGrid(i1,j1,5) + (1d0-ax)*ay*LocalStressGrid(i1-1,j1,5) + ax*(1d0-ay)*LocalStressGrid(i1,j1-1,5) + (1d0-ax)*(1d0-ay)*LocalStressGrid(i1-1,j1-1,5)
+          EQN%IniShearXZ(i,iBndGP)  =  ax*ay*LocalStressGrid(i1,j1,6) + (1d0-ax)*ay*LocalStressGrid(i1-1,j1,6) + ax*(1d0-ay)*LocalStressGrid(i1,j1-1,6) + (1d0-ax)*(1d0-ay)*LocalStressGrid(i1-1,j1-1,6)
           !EQN%IniStateVar(i,iBndGP) =  EQN%RS_sv0
 
           ! manage cohesion
