@@ -746,16 +746,16 @@ CONTAINS
      CASE(122)     ! T. Ulrich SUMATRA 2 x 1d 16.02.16
 	 ! OCeanic Crust
 	 ! Layer                   depth    rho     mu          lambda
-	 BedrockVelModel(1,:) = (/  -6d3, 2550.,18589500000.,26571000000./)
-	 BedrockVelModel(2,:) = (/  -8d3, 2850.,39016500000.,42379500000./)
-	 BedrockVelModel(3,:) = (/ -12d3, 3050.,50027625000.,53695250000./)
+	 BedrockVelModel(1,:) = (/  -6d3, 2550d0,18589500000d0,26571000000d0/)
+	 BedrockVelModel(2,:) = (/  -8d3, 2850d0,39016500000d0,42379500000d0/)
+	 BedrockVelModel(3,:) = (/ -12d3, 3050d0,50027625000d0,53695250000d0/)
 	 ! Crustal Crust
 	 ! Layer                   depth    rho     mu          lambda
-	 BedrockVelModel(4,:) = (/-6d3,2720.,33320000000.,31280000000./)
-	 BedrockVelModel(5,:) = (/-12d3,2860.,41298400000.,41984800000./)
-	 BedrockVelModel(6,:) = (/-23d3,3050.,46390500000.,60969500000./)
+	 BedrockVelModel(4,:) = (/-6d3,2720d0,33320000000d0,31280000000d0/)
+	 BedrockVelModel(5,:) = (/-12d3,2860d0,41298400000d0,41984800000d0/)
+	 BedrockVelModel(6,:) = (/-23d3,3050d0,46390500000d0,60969500000d0/)
 	 !below 1d layers
-	 BedrockVelModel(7,:) = (/ -5d10, 3330.,65942325000.,81235350000./)
+	 BedrockVelModel(7,:) = (/ -5d10, 3330d0,65942325000d0,81235350000d0/)
 
         DO iElem = 1, MESH%nElem
            iLayer = MESH%ELEM%Reference(0,iElem)        ! Zone number is given by reference 0 
