@@ -1,3 +1,4 @@
+#! /usr/bin/env python
 ##
 # @file
 # This file is part of SeisSol.
@@ -5,7 +6,7 @@
 # @author Carsten Uphoff (c.uphoff AT tum.de, http://www5.in.tum.de/wiki/index.php/Carsten_Uphoff,_M.Sc.)
 #
 # @section LICENSE
-# Copyright (c) 2015, SeisSol Group
+# Copyright (c) 2016, SeisSol Group
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -37,18 +38,23 @@
 # @section DESCRIPTION
 #
 
-import numpy
+import os
 
-class Waveform:
-  def __init__(self, names, data, coordinates):
-    data = numpy.array(data)
+def guessMemoryLayout(env):
+  if env['equations'] == 'elastic' or not env['generatedKernels']:
+    return ''
     
-    self.waveforms = dict()
-    for i in range(0, len(names)):
-      if names[i] == 'Time':
-        self.time = data[:,i]
-      else:
-        self.waveforms[ names[i] ] = data[:,i]
-    
-    self.coordinates = numpy.array(coordinates)
+  path = os.path.join('auto_tuning', 'config')
 
+  if env['equations'] == 'viscoelastic':
+    name = '{0}_{1}_O{2}_M{3}.xml'.format(env['equations'], env['arch'], env['order'], env['numberOfMechanisms'])
+  else:
+    name = '{0}_{1}_O{2}.xml'.format(env['equations'], env['arch'], env['order'], env['numberOfMechanisms'])
+  
+  candidate = os.path.join(path, name)
+  if os.path.exists(candidate):
+    return candidate
+  else:
+    print('WARNING: No suitable memory layout found. (Will fall back to all dense.)')
+    return os.path.join(path, 'dense.xml')
+  

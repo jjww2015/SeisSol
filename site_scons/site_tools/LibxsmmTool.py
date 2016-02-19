@@ -1,11 +1,12 @@
+#! /usr/bin/python
 ##
 # @file
 # This file is part of SeisSol.
 #
-# @author Carsten Uphoff (c.uphoff AT tum.de, http://www5.in.tum.de/wiki/index.php/Carsten_Uphoff,_M.Sc.)
+#@author Carsten Uphoff (c.uphoff AT tum.de, http://www5.in.tum.de/wiki/index.php/Carsten_Uphoff,_M.Sc.)
 #
 # @section LICENSE
-# Copyright (c) 2015, SeisSol Group
+# Copyright (c) 2016, SeisSol Group
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -35,20 +36,33 @@
 # POSSIBILITY OF SUCH DAMAGE.
 #
 # @section DESCRIPTION
+# Finds the libxsmm generator
 #
 
-import numpy
+def CheckProg(context, prog_name):
+  context.Display("Checking whether %s program exists... " % prog_name) 
+  path = context.env.WhereIs(prog_name)
+  if path:
+    context.Display(path + '\n')
+  else:
+    context.Display('no\n') 
+  context.did_show_result = 1
+  return path
 
-class Waveform:
-  def __init__(self, names, data, coordinates):
-    data = numpy.array(data)
-    
-    self.waveforms = dict()
-    for i in range(0, len(names)):
-      if names[i] == 'Time':
-        self.time = data[:,i]
-      else:
-        self.waveforms[ names[i] ] = data[:,i]
-    
-    self.coordinates = numpy.array(coordinates)
 
+def generate(env, **kw):
+    conf = env.Configure()
+    conf.AddTest('CheckProg', CheckProg)
+    required = kw['required'] if 'required' in kw else False
+    
+    generator = conf.CheckProg('libxsmm_gemm_generator')
+    if not generator and required:
+      print('Could not find libxsmm generator.')
+      env.Exit(1)
+    
+    env['libxsmmGenerator'] = generator
+
+    conf.Finish()
+
+def exists(env):
+    return True
