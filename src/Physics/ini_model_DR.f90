@@ -2181,10 +2181,12 @@ MODULE ini_model_DR_mod
   INTEGER                        :: iSide,iElem,iBndGP
   INTEGER                        :: iLocalNeighborSide,iNeighbor
   INTEGER                        :: MPIIndex, iObject
+  INTEGER                        :: k, nLayers
   REAL                           :: xV(MESH%GlobalVrtxType),yV(MESH%GlobalVrtxType),zV(MESH%GlobalVrtxType)
   REAL                           :: chi,tau
   REAL                           :: xi, eta, zeta, XGp, YGp, ZGp
   REAL                           :: b11, b22, b12, b13, b23, Omega, g, Pf, zIncreasingCohesion
+  REAL                           :: sigzz, Rz, zLayers(20), rhoLayers(20)
   !-------------------------------------------------------------------------! 
   INTENT(IN)    :: MESH, BND 
   INTENT(INOUT) :: DISC,EQN
@@ -2199,8 +2201,29 @@ MODULE ini_model_DR_mod
   b13 = 0.0764
   b23 = 0.0944
 
+  !New parameters R=0.8, stress accounting for the 1d layered velocity
+  b11 = 1.1974
+  b22 = 1.2268
+  b12 = 0.0691
+  b13 = 0.0795
+  b23 = 0.0982
+
+  !New parameters R=0.6, stress accounting for the 1d layered velocity
+  b11 = 1.1818
+  b22 = 1.2088
+  b12 = 0.0637
+  b13 = 0.0732
+  b23 = 0.0905
+
+  !New parameters R=0.5, stress accounting for the 1d layered velocity
+  b11 = 1.1741
+  b22 = 1.2000
+  b12 = 0.0610
+  b13 = 0.0702
+  b23 = 0.0866
+
   g = 9.8D0    
-  zIncreasingCohesion = -4000.
+  zIncreasingCohesion = -15000.
   ! Loop over every mesh element
   DO i = 1, MESH%Fault%nSide
        
@@ -2259,17 +2282,35 @@ MODULE ini_model_DR_mod
           !DISC%DynRup%Mu_D(i,iBndGP) = DISC%DynRup%Mu_D_ini
           !
 
-          IF (zGP.GE.-45000.0D0) THEN
-              Omega = 1D0
-          ELSEIF (zGP.GE.-50000D0) THEN
-              Omega = (zGP+50000D0)/5000D0
+          ! TO BE USED WITH 1d Layered medium
+          !free surface assumed at z=-2000m
+          !properties of continental crust
+          nLayers = 6
+          zLayers (1:6) = (/ 0d0,-2000d0, -6000d0, -12000d0, -23000d0,-600d6 /)
+          rhoLayers (1:6) = (/ 1000d0, 2720d0, 2860d0, 3050d0, 3300d0, 3375d0 /)
+          sigzz = 0d0
+
+          DO k=2,nLayers
+             IF (zGP.GT.zLayers(k)) THEN
+                sigzz = sigzz + rhoLayers(k-1)*(zGP-zLayers(k-1))*g
+                EXIT
+             ELSE
+                sigzz = sigzz + rhoLayers(k-1)*(zLayers(k)-zLayers(k-1))*g
+             ENDIF
+          ENDDO
+
+          IF (zGP.LT.-25000D0) THEN
+             Rz = (-zGp - 25000D0)/150e3
           ELSE
-              Omega = 0D0
+             Rz = 0.
           ENDIF
+
+          Omega = max(0D0,min(1d0, 1D0-Rz))
+
 
           Pf = -1000D0 * g * zGP
 
-          EQN%IniBulk_zz(i,iBndGP)  =  2670d0*g*zGP
+          EQN%IniBulk_zz(i,iBndGP)  =  sigzz
           EQN%IniBulk_xx(i,iBndGP)  =  Omega*(b11*(EQN%IniBulk_zz(i,iBndGP)+Pf)-Pf)+(1d0-Omega)*EQN%IniBulk_zz(i,iBndGP)
           EQN%IniBulk_yy(i,iBndGP)  =  Omega*(b22*(EQN%IniBulk_zz(i,iBndGP)+Pf)-Pf)+(1d0-Omega)*EQN%IniBulk_zz(i,iBndGP)
           EQN%IniShearXY(i,iBndGP)  =  Omega*(b12*(EQN%IniBulk_zz(i,iBndGP)+Pf))
@@ -2282,7 +2323,8 @@ MODULE ini_model_DR_mod
           ! manage cohesion
           IF (zGP.GE.zIncreasingCohesion) THEN
               ! higher cohesion near free surface
-              DISC%DynRup%cohesion(i,iBndGP) = -0.4d6-0.0002d6*(zGP-zIncreasingCohesion)
+              !DISC%DynRup%cohesion(i,iBndGP) = -0.4d6-0.0002d6*(zGP-zIncreasingCohesion)
+              DISC%DynRup%cohesion(i,iBndGP) = -0.4d6-8.0d6*(zGP-zIncreasingCohesion)/(-zIncreasingCohesion)
           ELSE
               ! set cohesion
               DISC%DynRup%cohesion(i,iBndGP) = -0.4d6

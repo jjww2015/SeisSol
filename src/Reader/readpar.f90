@@ -590,6 +590,9 @@ CONTAINS
            STOP
       ENDIF
       !
+  CASE(122) ! SUMATRA T Ulrich 16.02.2016
+      !
+      logInfo(*) 'Material property zones are defined by SeisSol. '
   CASE DEFAULT
          logError(*) 'Wrong linearization type.'
       STOP

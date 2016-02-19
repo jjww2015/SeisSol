@@ -743,6 +743,58 @@ CONTAINS
 
         ENDDO
 
+     CASE(122)     ! T. Ulrich SUMATRA 2 x 1d 16.02.16
+	 ! OCeanic Crust
+	 ! Layer                   depth    rho     mu          lambda
+	 BedrockVelModel(1,:) = (/  -6d3, 2550,18589500000,26571000000/)
+	 BedrockVelModel(2,:) = (/  -8d3, 2850,39016500000,42379500000/)
+	 BedrockVelModel(3,:) = (/ -12d3, 3050,50027625000,53695250000/)
+	 ! Crustal Crust
+	 ! Layer                   depth    rho     mu          lambda
+	 BedrockVelModel(4,:) = (/-6d3,2720,33320000000,31280000000/)
+	 BedrockVelModel(5,:) = (/-12d3,2860,41298400000,41984800000/)
+	 BedrockVelModel(6,:) = (/-23d3,3050,46390500000,60969500000/)
+	 !below 1d layers
+	 BedrockVelModel(7,:) = (/ -5d10, 3330,65942325000,81235350000/)
+
+        DO iElem = 1, MESH%nElem
+           iLayer = MESH%ELEM%Reference(0,iElem)        ! Zone number is given by reference 0 
+           SELECT CASE (iLayer)
+            CASE(1)
+            ! OCeanic Crust
+             z = MESH%ELEM%xyBary(3,iElem) ! supported by Sebs new mesh reader
+             IF (z.GT.BedrockVelModel(1,1)) THEN
+                 MaterialVal(iElem,1:3) =   BedrockVelModel(1,2:4)
+             ELSEIF ((z.LT.BedrockVelModel(1,1)).AND.(z.GE.BedrockVelModel(2,1))) THEN
+                 MaterialVal(iElem,1:3) =   BedrockVelModel(2,2:4)
+             ELSEIF ((z.LT.BedrockVelModel(2,1)).AND.(z.GE.BedrockVelModel(3,1))) THEN
+                 MaterialVal(iElem,1:3) =   BedrockVelModel(3,2:4)
+             ELSEIF ((z.LT.BedrockVelModel(3,1)).AND.(z.GE.BedrockVelModel(7,1))) THEN
+                 MaterialVal(iElem,1:3) =   BedrockVelModel(7,2:4)
+             ELSE
+                 logError(*) "depth lower than",BedrockVelModel(7,1),iLayer,z
+             ENDIF
+           CASE(2)
+            ! Crustal Crust
+
+             z = MESH%ELEM%xyBary(3,iElem) ! supported by Sebs new mesh reader
+             IF (z.GT.BedrockVelModel(4,1)) THEN
+                 MaterialVal(iElem,1:3) =   BedrockVelModel(4,2:4)
+             ELSEIF ((z.LT.BedrockVelModel(4,1)).AND.(z.GE.BedrockVelModel(5,1))) THEN
+                 MaterialVal(iElem,1:3) =   BedrockVelModel(5,2:4)
+             ELSEIF ((z.LT.BedrockVelModel(5,1)).AND.(z.GE.BedrockVelModel(6,1))) THEN
+                 MaterialVal(iElem,1:3) =   BedrockVelModel(6,2:4)
+             ELSEIF ((z.LT.BedrockVelModel(6,1)).AND.(z.GE.BedrockVelModel(7,1))) THEN
+                 MaterialVal(iElem,1:3) =   BedrockVelModel(7,2:4)
+             ELSE
+                 logError(*) "depth lower than",BedrockVelModel(7,1),iLayer,z
+             ENDIF
+           CASE(3)
+            MaterialVal(iElem,1:3) =   BedrockVelModel(7,2:4)
+           CASE DEFAULT
+                 logError(*) "Material assignement: unkown region", iLayer
+           END SELECT
+        ENDDO
 
       CASE(60) ! special case of 1D layered medium, imposed without meshed layers for Landers 1992
                ! after Wald and Heaton 1994, Table 1
