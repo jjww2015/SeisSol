@@ -2222,8 +2222,15 @@ MODULE ini_model_DR_mod
   b13 = 0.0702
   b23 = 0.0866
 
+  !New parameters R=0.6, mus = 0.3 mud=0.25, stress accounting for the 1d layered velocity
+  b11 = 1.3946
+  b22 = 1.4533
+  b12 = 0.1382
+  b13 = 0.1259
+  b23 = 0.1555
+
   g = 9.8D0    
-  zIncreasingCohesion = -15000.
+  zIncreasingCohesion = -10000.
   ! Loop over every mesh element
   DO i = 1, MESH%Fault%nSide
        
@@ -2324,7 +2331,7 @@ MODULE ini_model_DR_mod
           IF (zGP.GE.zIncreasingCohesion) THEN
               ! higher cohesion near free surface
               !DISC%DynRup%cohesion(i,iBndGP) = -0.4d6-0.0002d6*(zGP-zIncreasingCohesion)
-              DISC%DynRup%cohesion(i,iBndGP) = -0.4d6-8.0d6*(zGP-zIncreasingCohesion)/(-zIncreasingCohesion)
+              DISC%DynRup%cohesion(i,iBndGP) = -0.4d6-4.0d6*(zGP-zIncreasingCohesion)/(-zIncreasingCohesion)
           ELSE
               ! set cohesion
               DISC%DynRup%cohesion(i,iBndGP) = -0.4d6
