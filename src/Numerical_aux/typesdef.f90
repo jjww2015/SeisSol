@@ -863,8 +863,10 @@ MODULE TypesDef
      INTEGER                                :: nOutPoints                       !< Number of output points per element
      INTEGER                                :: nOutVars
         !< Number of output variables (calculated using OututMask)
-     INTEGER                                :: printtimeinterval                !< Time interval at which output will be written
-     INTEGER                                :: OutputMask(1:9)                  !< Info of desired output 1/ yes, 0/ no - position: 1/ slip rate 2/ stress 3/ normal velocity 4/ in case of rate and state output friction and state variable 5/ initial stress fields 6/ displacement 7/rupture speed 8/accumulated slip 9/Peak SR
+     INTEGER                                :: printtimeinterval                !< Iteration interval at which output will be written
+     INTEGER                                :: printIntervalCriterion           !< 1=iteration, 2=time
+     REAL                                   :: printtimeinterval_sec            !< Time interval at which output will be written
+     INTEGER                                :: OutputMask(1:9)                  !< Info of desired output 1/ yes, 0/ no - position: 1/ slip rate 2/ stress 3/ normal velocity 4/ in case of rate and state output friction and state variable 5/ initial stress fields 6/ displacement 7/rupture speed 8/accumulated slip
      INTEGER                      , POINTER :: OutputLabel(:)    => NULL()               !< Info of desired output 1/ yes, 0/ no - position: 1/ slip rate 2/ stress 3/ normal velocity 4/ in case of rate and state output friction and state variable 5/ initial stress fields
      LOGICAL                                :: DR_pick_output                   !< DR output at certain receiver stations
      INTEGER                                :: nDR_pick                         !< number of DR output receiver for this domain
@@ -877,7 +879,6 @@ MODULE TypesDef
      REAL                         , POINTER :: rotmat(:,:,:)   => NULL()                 !< stores rotation matrix for fault receiver
      REAL                                   :: p0
      integer                                :: refinement
-     integer                                :: BinaryOutput
      integer,pointer                        :: elements_per_rank(:)
      integer                                :: refinement_strategy
   END TYPE tDynRup_output
