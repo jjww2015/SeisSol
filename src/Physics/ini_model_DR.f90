@@ -2228,6 +2228,12 @@ MODULE ini_model_DR_mod
   b12 = 0.1382
   b13 = 0.1259
   b23 = 0.1555
+  !New parameters R=0.6, mus = 0.55 mud=0.45, stress accounting for the 1d layered velocity
+  b11 = 2.0028
+  b22 = 2.1521
+  b12 = 0.3513
+  b13 = 0.1936
+  b23 = 0.2391
 
   g = 9.8D0    
   zIncreasingCohesion = -10000.
