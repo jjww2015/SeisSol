@@ -2221,19 +2221,42 @@ MODULE ini_model_DR_mod
   b12 = 0.0610
   b13 = 0.0702
   b23 = 0.0866
-
-  !New parameters R=0.6, mus = 0.3 mud=0.25, stress accounting for the 1d layered velocity
-  b11 = 1.3946
-  b22 = 1.4533
-  b12 = 0.1382
-  b13 = 0.1259
-  b23 = 0.1555
   !New parameters R=0.6, mus = 0.55 mud=0.45, stress accounting for the 1d layered velocity
   b11 = 2.0028
   b22 = 2.1521
   b12 = 0.3513
   b13 = 0.1936
   b23 = 0.2391
+  !New parameters R=0.6, mus = 0.3 mud=0.25, stress accounting for the 1d layered velocity, and sii(2) = sm+ds
+  !b11 = 1.6037
+  !b22 = 1.5905
+  !b12 = -0.0311
+  !b13 = 0.1259
+  !b23 = 0.1555
+  !New parameters R=0.6, mus = 0.3 mud=0.25, stress accounting for the 1d layered velocity, and sii(2) = sm-ds
+  b11 = 1.1854
+  b22 = 1.3162
+  b12 = 0.3076
+  b13 = 0.1259
+  b23 = 0.1555
+  !New parameters R=0.5, stress accounting for the 1d layered velocity
+  b11 = 1.3862
+  b22 = 1.4437
+  b12 = 0.1353
+  b13 = 0.1233
+  b23 = 0.1522
+  !New parameters R=0.6, stress accounting for the 1d layered velocity
+  b11 = 1.3964
+  b22 = 1.4533
+  b12 = 0.1382
+  b13 = 0.1259
+  b23 = 0.1555
+  !New parameters R=0.6, stress accounting for the 1d layered velocity, sii = sm - ds
+  b11 = 1.1854
+  b22 = 1.3162
+  b12 = 0.3071
+  b13 = 0.1259
+  b23 = 0.1555
 
   g = 9.8D0    
   zIncreasingCohesion = -10000.
@@ -2332,17 +2355,17 @@ MODULE ini_model_DR_mod
           EQN%IniBulk_xx(i,iBndGP)  =  EQN%IniBulk_xx(i,iBndGP) + Pf
           EQN%IniBulk_yy(i,iBndGP)  =  EQN%IniBulk_yy(i,iBndGP) + Pf
           EQN%IniBulk_zz(i,iBndGP)  =  EQN%IniBulk_zz(i,iBndGP) + Pf
+          
 
           ! manage cohesion
           IF (zGP.GE.zIncreasingCohesion) THEN
               ! higher cohesion near free surface
               !DISC%DynRup%cohesion(i,iBndGP) = -0.4d6-0.0002d6*(zGP-zIncreasingCohesion)
-              DISC%DynRup%cohesion(i,iBndGP) = -0.4d6-4.0d6*(zGP-zIncreasingCohesion)/(-zIncreasingCohesion)
+              DISC%DynRup%cohesion(i,iBndGP) = -0.4d6-1.0d6*(zGP-zIncreasingCohesion)/(-zIncreasingCohesion)
           ELSE
               ! set cohesion
               DISC%DynRup%cohesion(i,iBndGP) = -0.4d6
           ENDIF
-          
       ENDDO ! iBndGP
                 
   ENDDO !    MESH%Fault%nSide   
@@ -2464,6 +2487,20 @@ MODULE ini_model_DR_mod
   b12 = 0.0000
   b13 = 0.1915
   b23 = 0.0000
+  ! R = 0.5 DIP 20 (zhypo = 22.5e3, ie 25e3 taking into account the 2.5e3 water)
+  ! mu = 0.55 0.5 rho= 3375
+  !b11 = 2.5315
+  !b22 = 1.7657
+  !b12 = 0.0000
+  !b13 = 0.2968
+  !b23 = 0.0000
+  ! R = 0.5 DIP 20 (zhypo = 22.5e3, ie 25e3 taking into account the 2.5e3 water)
+  ! mu = 0.55 0.45 rho= 3375
+  !b11 = 2.4334
+  !b22 = 1.7167
+  !b12 = 0.0000
+  !b13 = 0.2778
+  !b23 = 0.0000
 
   g = 9.8D0    
   zIncreasingCohesion = -15000.
