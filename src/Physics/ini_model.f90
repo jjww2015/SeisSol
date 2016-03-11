@@ -774,7 +774,7 @@ CONTAINS
              ELSE
                  logError(*) "depth lower than",BedrockVelModel(7,1),iLayer,z
              ENDIF
-           CASE(2)
+           CASE(3)
             ! Crustal Crust
 
              z = MESH%ELEM%xyBary(3,iElem) ! supported by Sebs new mesh reader
@@ -789,7 +789,7 @@ CONTAINS
              ELSE
                  logError(*) "depth lower than",BedrockVelModel(7,1),iLayer,z
              ENDIF
-           CASE(3)
+           CASE(2)
             MaterialVal(iElem,1:3) =   BedrockVelModel(7,2:4)
            CASE DEFAULT
                  logError(*) "Material assignement: unkown region", iLayer
