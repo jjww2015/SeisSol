@@ -2533,10 +2533,10 @@ MODULE ini_model_DR_mod
         ! compute & store rotation matrices:
         !   xyz to face-aligned coordinate system
         !   face-aligned coordinate system to xyz 
-        !call RotationMatrix3D( ux, uy, uz, T(:,:), iT(:,:),EQN )
+        call RotationMatrix3D( ux, uy, uz, T(:,:), iT(:,:),EQN )
 
 
-         ! localStress(:)=MATMUL(T(1:6,1:6),localStress(:))
+          localStress(:)=MATMUL(T(1:6,1:6),localStress(:))
 
           EQN%IniBulk_xx(i,iBndGP) = localStress(1)
           EQN%IniBulk_yy(i,iBndGP) = localStress(2)
