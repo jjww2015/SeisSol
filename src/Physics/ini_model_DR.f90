@@ -2402,7 +2402,7 @@ MODULE ini_model_DR_mod
   REAL                           :: xi, eta, zeta, XGp, YGp, ZGp
   REAL                           :: b11, b22, b12, b13, b23, Omega, g, Pf, zIncreasingCohesion
   REAL                           :: sigzz, Rz, zLayers(20), rhoLayers(20) 
-  REAL                           :: zLocal, ux(3),uy(3),uz(3),LocalStress(6),T(6,6), iT(6,6)
+  REAL                           :: zLocal, ux(3),uy(3),uz(3),LocalStress(6),T(9,9), iT(9,9)
   !-------------------------------------------------------------------------! 
   INTENT(IN)    :: MESH, BND 
   INTENT(INOUT) :: DISC,EQN
