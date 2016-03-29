@@ -2402,7 +2402,7 @@ MODULE ini_model_DR_mod
   REAL                           :: xi, eta, zeta, XGp, YGp, ZGp
   REAL                           :: b11, b22, b12, b13, b23, Omega, g, Pf, zIncreasingCohesion
   REAL                           :: sigzz, Rz, zLayers(20), rhoLayers(20) 
-  REAL                           :: zLocal, ux(3),uy(3),uz(3),LocalStress(6),T(9,9), iT(9,9)
+  REAL                           :: zLocal, ux(3),uy(3),uz(3),LocalStress(6),T(eqn%nVar,eqn%nVar), iT(eqn%nVar,eqn%nVar)
   !-------------------------------------------------------------------------! 
   INTENT(IN)    :: MESH, BND 
   INTENT(INOUT) :: DISC,EQN
@@ -2536,7 +2536,7 @@ MODULE ini_model_DR_mod
         call RotationMatrix3D( ux, uy, uz, T(:,:), iT(:,:),EQN )
 
 
-          localStress(:)=MATMUL(T(1:6,1:6),localStress(:))
+          localStress=MATMUL(T(:6,:6),localStress)
 
           EQN%IniBulk_xx(i,iBndGP) = localStress(1)
           EQN%IniBulk_yy(i,iBndGP) = localStress(2)
