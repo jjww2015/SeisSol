@@ -3089,8 +3089,6 @@ MODULE ini_model_DR_mod
                 
   END SUBROUTINE background_TPV33       
 
-
-
   !> Tohoku1 backround stress model
   !<
   SUBROUTINE background_TOH1(DISC,EQN,MESH)
