@@ -149,7 +149,6 @@ CONTAINS
     
     REAL, POINTER                   :: iMassMatrix(:,:) => NULL()             ! Pointer to the corresponding mass matrix
     INTEGER                         :: LocElemType                            ! Type of element
-    REAL                            :: Pf, b13, b33, b11                      ! fluid pressure and coeffcients for special initial loading in TPV26/TPV27
     INTEGER                         :: InterpolationScheme = 1                ! Select the interpolation scheme (linear=1, cubic=else)
     !--------------------------------------------------------------------------
     INTENT(IN)                      :: MESH,IC
@@ -643,7 +642,6 @@ CONTAINS
 
         ENDDO
 
-=======
 
         CASE(26)
         ! S.Wollherr 2016
