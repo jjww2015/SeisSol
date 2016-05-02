@@ -854,7 +854,8 @@ CONTAINS
      CASE(1223)     ! T. Ulrich SUMATRA 2 x 1d 16.02.16 and 3 layers below fault, 1 layer above: 7 regions
          ! OCeanic Crust
          ! Layer                   depth    rho     mu          lambda
-         BedrockVelModel(1,:) = (/  -6d3, 2550d0,18589500000d0,26571000000d0/)
+         !BedrockVelModel(1,:) = (/  -6d3, 2550d0,18589500000d0,26571000000d0/)
+         BedrockVelModel(1,:) = (/  -6d3, 2310d0, 7401471000d0,13494558000d0/)
          BedrockVelModel(2,:) = (/  -8d3, 2850d0,39016500000d0,42379500000d0/)
          BedrockVelModel(3,:) = (/ -12d3, 3050d0,50027625000d0,53695250000d0/)
          ! Crustal Crust
@@ -911,7 +912,60 @@ CONTAINS
            END SELECT
         ENDDO
 
+     CASE(1224)     ! T. Ulrich SUMATRA 2 x 1d 14.04.16 and 1 layers below fault, 1 layer above: 4 regions (small model)
+         ! OCeanic Crust
+         ! Layer                   depth    rho     mu          lambda
+         BedrockVelModel(1,:) = (/  -6d3, 2550d0,18589500000d0,26571000000d0/)
+         !BedrockVelModel(1,:) = (/  -6d3, 2310d0, 7401471000d0,13494558000d0/)
+         BedrockVelModel(2,:) = (/  -8d3, 2850d0,39016500000d0,42379500000d0/)
+         BedrockVelModel(3,:) = (/ -12d3, 3050d0,50027625000d0,53695250000d0/)
+         ! Crustal Crust
+         ! Layer                   depth    rho     mu          lambda
+         BedrockVelModel(4,:) = (/-6d3,2720d0,33320000000d0,31280000000d0/)
+         BedrockVelModel(5,:) = (/-12d3,2860d0,41298400000d0,41984800000d0/)
+         BedrockVelModel(6,:) = (/-23d3,3050d0,46390500000d0,60969500000d0/)
+         !below 1d layers
+         BedrockVelModel(7,:) = (/ -5d10, 3330d0,65942325000d0,81235350000d0/)
 
+        DO iElem = 1, MESH%nElem
+           iLayer = MESH%ELEM%Reference(0,iElem)        ! Zone number is given by reference 0 
+           SELECT CASE (iLayer)
+            CASE(2)
+             MaterialVal(iElem,1:3) =   BedrockVelModel(1,2:4)
+            CASE(1)
+            ! OCeanic Crust
+             z = MESH%ELEM%xyBary(3,iElem) ! supported by Sebs new mesh reader
+             IF (z.GT.BedrockVelModel(1,1)) THEN
+                 MaterialVal(iElem,1:3) =   BedrockVelModel(1,2:4)
+             ELSEIF ((z.LT.BedrockVelModel(1,1)).AND.(z.GE.BedrockVelModel(2,1))) THEN
+                 MaterialVal(iElem,1:3) =   BedrockVelModel(2,2:4)
+             ELSEIF ((z.LT.BedrockVelModel(2,1)).AND.(z.GE.BedrockVelModel(3,1))) THEN
+                 MaterialVal(iElem,1:3) =   BedrockVelModel(3,2:4)
+             ELSEIF ((z.LT.BedrockVelModel(3,1)).AND.(z.GE.BedrockVelModel(7,1))) THEN
+                 MaterialVal(iElem,1:3) =   BedrockVelModel(7,2:4)
+             ELSE
+                 logError(*) "depth lower than",BedrockVelModel(7,1),iLayer,z
+             ENDIF
+           CASE(4)
+            ! Crustal Crust
+             z = MESH%ELEM%xyBary(3,iElem) ! supported by Sebs new mesh reader
+             IF (z.GT.BedrockVelModel(4,1)) THEN
+                 MaterialVal(iElem,1:3) =   BedrockVelModel(4,2:4)
+             ELSEIF ((z.LT.BedrockVelModel(4,1)).AND.(z.GE.BedrockVelModel(5,1))) THEN
+                 MaterialVal(iElem,1:3) =   BedrockVelModel(5,2:4)
+             ELSEIF ((z.LT.BedrockVelModel(5,1)).AND.(z.GE.BedrockVelModel(6,1))) THEN
+                 MaterialVal(iElem,1:3) =   BedrockVelModel(6,2:4)
+             ELSEIF ((z.LT.BedrockVelModel(6,1)).AND.(z.GE.BedrockVelModel(7,1))) THEN
+                 MaterialVal(iElem,1:3) =   BedrockVelModel(7,2:4)
+             ELSE
+                 logError(*) "depth lower than",BedrockVelModel(7,1),iLayer,z
+             ENDIF
+           CASE(3) !below 80km
+            MaterialVal(iElem,1:3) =   BedrockVelModel(7,2:4)
+           CASE DEFAULT
+                 logError(*) "Material assignement: unkown region", iLayer
+           END SELECT
+        ENDDO
 
      CASE(1221)     ! T. Ulrich SUMATRA 2 x 1d 09.03.2016 GEO MESH
 	 ! OCeanic Crust

@@ -2184,11 +2184,15 @@ MODULE ini_model_DR_mod
   INTEGER                        :: iSide,iElem,iBndGP
   INTEGER                        :: iLocalNeighborSide,iNeighbor
   INTEGER                        :: MPIIndex, iObject
-  INTEGER                        :: k, nLayers
+  INTEGER                        :: k, nLayers, Laterally_homogenous_Stress
   REAL                           :: xV(MESH%GlobalVrtxType),yV(MESH%GlobalVrtxType),zV(MESH%GlobalVrtxType)
   REAL                           :: chi,tau
   REAL                           :: xi, eta, zeta, XGp, YGp, ZGp
   REAL                           :: b11, b22, b12, b13, b23, Omega, g, Pf, zIncreasingCohesion
+  REAL                           :: b11_N, b22_N, b12_N, b13_N, b23_N
+  REAL                           :: b11_C, b22_C, b12_C, b13_C, b23_C
+  REAL                           :: b11_S, b22_S, b12_S, b13_S, b23_S
+  REAL                           :: yN1, yN2, yS1, yS2, alpha
   REAL                           :: sigzz, Rz, zLayers(20), rhoLayers(20)
   !-------------------------------------------------------------------------! 
   INTENT(IN)    :: MESH, BND 
@@ -2198,68 +2202,41 @@ MODULE ini_model_DR_mod
   ! stress is assigned to each Gaussian node
   ! depth dependent stress function (gravity)
   ! NOTE: z negative is depth, free surface is at z=0
-  b11 = 1.1897
-  b22 = 1.2179
-  b12 = 0.0664
-  b13 = 0.0764
-  b23 = 0.0944
+  Laterally_homogenous_Stress = 0
 
-  !New parameters R=0.8, stress accounting for the 1d layered velocity
-  b11 = 1.1974
-  b22 = 1.2268
-  b12 = 0.0691
-  b13 = 0.0795
-  b23 = 0.0982
+  IF (Laterally_homogenous_Stress.EQ.1) THEN
+     !New parameters R=0.6, stress accounting for the 1d layered velocity, sii = sm - ds
+     b11 = 1.1854
+     b22 = 1.3162
+     b12 = 0.3076
+     b13 = 0.1259
+     b23 = 0.1555
+  ELSE
+     !New parameters R=0.6, stress accounting for the 1d layered velocity, sii = sm - ds,  South (strike = 25+90+180)
+     b11_S = 1.0487
+     b22_S = 1.4529
+     b12_S = 0.2409
+     b13_S = 0.0846
+     b23_S = 0.1814
+     !New parameters R=0.6, stress accounting for the 1d layered velocity, sii = sm - ds,  Center (strike = 40+90+180)
+     b11_C = 1.1962
+     b22_C = 1.3054
+     b12_C = 0.3097
+     b13_C = 0.1286
+     b23_C = 0.1533
+     !New parameters R=0.6, stress accounting for the 1d layered velocity, sii = sm - ds,  Center (strike = 75+90+180)
+     b11_N = 1.5231
+     b22_N = 0.9785
+     b12_N = 0.1572
+     b13_N = 0.1933
+     b23_N = 0.0518
 
-  !New parameters R=0.6, stress accounting for the 1d layered velocity
-  b11 = 1.1818
-  b22 = 1.2088
-  b12 = 0.0637
-  b13 = 0.0732
-  b23 = 0.0905
-
-  !New parameters R=0.5, stress accounting for the 1d layered velocity
-  b11 = 1.1741
-  b22 = 1.2000
-  b12 = 0.0610
-  b13 = 0.0702
-  b23 = 0.0866
-  !New parameters R=0.6, mus = 0.55 mud=0.45, stress accounting for the 1d layered velocity
-  b11 = 2.0028
-  b22 = 2.1521
-  b12 = 0.3513
-  b13 = 0.1936
-  b23 = 0.2391
-  !New parameters R=0.6, mus = 0.3 mud=0.25, stress accounting for the 1d layered velocity, and sii(2) = sm+ds
-  !b11 = 1.6037
-  !b22 = 1.5905
-  !b12 = -0.0311
-  !b13 = 0.1259
-  !b23 = 0.1555
-  !New parameters R=0.6, mus = 0.3 mud=0.25, stress accounting for the 1d layered velocity, and sii(2) = sm-ds
-  b11 = 1.1854
-  b22 = 1.3162
-  b12 = 0.3076
-  b13 = 0.1259
-  b23 = 0.1555
-  !New parameters R=0.5, stress accounting for the 1d layered velocity
-  b11 = 1.3862
-  b22 = 1.4437
-  b12 = 0.1353
-  b13 = 0.1233
-  b23 = 0.1522
-  !New parameters R=0.6, stress accounting for the 1d layered velocity
-  b11 = 1.3964
-  b22 = 1.4533
-  b12 = 0.1382
-  b13 = 0.1259
-  b23 = 0.1555
-  !New parameters R=0.6, stress accounting for the 1d layered velocity, sii = sm - ds
-  b11 = 1.1854
-  b22 = 1.3162
-  b12 = 0.3071
-  b13 = 0.1259
-  b23 = 0.1555
+     ! 10.5/8.5/5/4
+     yN2 = 1160695.0941260615
+     yN1 = 939574.3060454715
+     yS2 = 552664.2968779367
+     yS1 = 442127.3902531094
+  ENDIF
 
   g = 9.8D0    
   zIncreasingCohesion = -10000.
@@ -2340,15 +2317,65 @@ MODULE ini_model_DR_mod
 
           IF (zGP.LT.-25000D0) THEN
              Rz = (-zGp - 25000D0)/150e3
+             !Rz = (-zGp - 25000D0)/50e3
+             !Rz = 0d0
           ELSE
              Rz = 0.
           ENDIF
+          !Rz = max(0D0,min(0.99999999999d0, Rz))
+          !DISC%DynRup%Mu_D(i,iBndGP) = (1d0-Rz)*DISC%DynRup%Mu_D_ini + Rz*DISC%DynRup%Mu_S_ini
+          !Rz = 0d0
 
           Omega = max(0D0,min(1d0, 1D0-Rz))
 
+          IF (Laterally_homogenous_Stress.EQ.0) THEN
+             ! The stress varies along y (along lon=cst)
+             ! cst_N
+             !**yN2
+             ! lin from cst_N to cst_C
+             !**yN1
+             ! cst_C
+             !**yS2
+             ! lin from cst_C to cst_S
+             !**yS1
+             ! cst_S
+
+             IF (yGP.GE.yN2) THEN
+                b11 = b11_N
+                b22 = b22_N
+                b12 = b12_N
+                b13 = b13_N
+                b23 = b23_N
+             ELSE IF ((yGP.GE.yN1).AND.(yGP.LT.yN2)) THEN
+                alpha = (yGP-yN1)/(yN2-yN1)
+                b11 = alpha * b11_N + (1d0-alpha)* b11_C
+                b22 = alpha * b22_N + (1d0-alpha)* b22_C
+                b12 = alpha * b12_N + (1d0-alpha)* b12_C
+                b13 = alpha * b13_N + (1d0-alpha)* b13_C
+                b23 = alpha * b23_N + (1d0-alpha)* b23_C
+             ELSE IF ((yGP.GE.yS2).AND.(yGP.LT.yN1)) THEN
+                b11 = b11_C
+                b22 = b22_C
+                b12 = b12_C
+                b13 = b13_C
+                b23 = b23_C
+             ELSE IF ((yGP.GE.yS1).AND.(yGP.LT.yS2)) THEN
+                alpha = (yGP-yS1)/(yS2-yS1)
+                b11 = alpha * b11_C + (1d0-alpha)* b11_S
+                b22 = alpha * b22_C + (1d0-alpha)* b22_S
+                b12 = alpha * b12_C + (1d0-alpha)* b12_S
+                b13 = alpha * b13_C + (1d0-alpha)* b13_S
+                b23 = alpha * b23_C + (1d0-alpha)* b23_S
+             ELSE
+                b11 = b11_S
+                b22 = b22_S
+                b12 = b12_S
+                b13 = b13_s
+                b23 = b23_s
+             ENDIF
+          ENDIF
 
           Pf = -1000D0 * g * zGP
-
           EQN%IniBulk_zz(i,iBndGP)  =  sigzz
           EQN%IniBulk_xx(i,iBndGP)  =  Omega*(b11*(EQN%IniBulk_zz(i,iBndGP)+Pf)-Pf)+(1d0-Omega)*EQN%IniBulk_zz(i,iBndGP)
           EQN%IniBulk_yy(i,iBndGP)  =  Omega*(b22*(EQN%IniBulk_zz(i,iBndGP)+Pf)-Pf)+(1d0-Omega)*EQN%IniBulk_zz(i,iBndGP)
