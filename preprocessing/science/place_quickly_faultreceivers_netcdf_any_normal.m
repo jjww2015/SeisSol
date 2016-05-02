@@ -85,10 +85,10 @@ ux = cross(randomV,normal);
 ux = ux/norm(ux);
 uy = cross(ux, normal);
 
-
 % load receiver stations
-eval(['load ',rec_filename,'.dat']);
-eval(['st = ',rec_filename,';']);
+%eval(['load ',rec_filename,'.dat']);
+%eval(['st = ',rec_filename,';']);
+st = load([rec_filename,'.dat']);
 if size(st,2)~=3
     disp(sprintf('Error in %s: number of columns not equal 3',rec_filename))
     return
@@ -223,5 +223,15 @@ end
 
 
 disp('    FINISHED');
- 
 
+%Now writing _sameorder file, in which the initial order of the receiver
+%(input file) is kept
+disp(['    receiver coordinates saved as ',filename0,'_sameorder.dat']);
+%for i=1:2
+fid_out  = fopen([filename0 ,'_sameorder.dat'],'w');
+for i=1:size(st,1)
+    indexes2 = find((abs(receivers(:,1)-st(i,1))<1e-3) & (abs(receivers(:,2)-st(i,2))<1e-3));
+    fprintf(fid_out,'%20.12f %20.12f %20.12f\n',st(i,1:2), receivers(indexes2,3));
+end
+disp('    Receiver coordinates saved!');
+fclose(fid_out);
