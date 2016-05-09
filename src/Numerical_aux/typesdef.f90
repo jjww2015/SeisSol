@@ -866,7 +866,7 @@ MODULE TypesDef
      INTEGER                                :: printtimeinterval                !< Iteration interval at which output will be written
      INTEGER                                :: printIntervalCriterion           !< 1=iteration, 2=time
      REAL                                   :: printtimeinterval_sec            !< Time interval at which output will be written
-     INTEGER                                :: OutputMask(1:9)                  !< Info of desired output 1/ yes, 0/ no - position: 1/ slip rate 2/ stress 3/ normal velocity 4/ in case of rate and state output friction and state variable 5/ initial stress fields 6/ displacement 7/rupture speed 8/accumulated slip 9/Peak SR
+     INTEGER                                :: OutputMask(1:10)                  !< Info of desired output 1/ yes, 0/ no - position: 1/ slip rate 2/ stress 3/ normal velocity 4/ in case of rate and state output friction and state variable 5/ initial stress fields 6/ displacement 7/rupture speed 8/accumulated slip 9/Peak SR 10/Slip Duration
      INTEGER                      , POINTER :: OutputLabel(:)    => NULL()               !< Info of desired output 1/ yes, 0/ no - position: 1/ slip rate 2/ stress 3/ normal velocity 4/ in case of rate and state output friction and state variable 5/ initial stress fields
      LOGICAL                                :: DR_pick_output                   !< DR output at certain receiver stations
      INTEGER                                :: nDR_pick                         !< number of DR output receiver for this domain
@@ -952,6 +952,7 @@ MODULE TypesDef
      !RF output handled in tDynRup as it has to be computed in the friction solver
      INTEGER                                :: RF_output_on                     !< rupture front output on = 1, off = 0
      LOGICAL, ALLOCATABLE                   :: RF(:,:)                          !< rupture front output for this GP: true or false
+     REAL, ALLOCATABLE                      :: SlipDuration(:,:)                !< Slip duration output for this GP
      ! Magnitude output
      INTEGER                                :: magnitude_output_on              !< magnitude output on = 1, off = 0
      INTEGER                                :: energy_rate_output_on            !< fault energy rate output on = 1, off = 0 (currently moment rate and frictional energy rate)
