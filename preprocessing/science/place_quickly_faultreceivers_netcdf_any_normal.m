@@ -48,8 +48,8 @@ end
 disp(' ')
 disp('    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
 disp('    %%                                                     %%')
-disp('    %%         PLACE_QUICKLY_FAULTRECEIVERS_NETCDF         %%')
-disp('    %%         TO COMPUTE FAULTRECEIVER POSITIONS          %%')
+disp('    %%      PLACE_QUICKLY_FAULTRECEIVERS_NETCDF_ANY_NORMAL %%')
+disp('    %%      TO COMPUTE FAULTRECEIVER POSITIONS             %%')
 disp('    %%                                                     %%')
 disp('    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
 disp(' ')
@@ -74,6 +74,11 @@ else
   plotmarker = 'n';
 end
 SufaceId = str2num(SufaceId); 
+if SufaceId==1
+   depthdecrement     = input('    depth (in m) to decrement for more accurate outputs (ex 0 or 50)        :  ','s');
+   depthdecrement = str2double(depthdecrement);
+end
+
 coords = strsplit(snormal,',');
 normal(1) = str2double(coords(1));
 normal(2) = str2double(coords(2));  
@@ -188,9 +193,9 @@ for iPartition=1:nPartition
    end
 end
 
-disp('!!!removing 50m in normal direction!!!!!!');
+disp(sprintf('!!!removing %f in normal direction!!!!!!', depthdecrement));
 for i =1:size(receivers,1)
-    receivers(i,:) = receivers(i,:)-50*normal;
+    receivers(i,:) = receivers(i,:)-depthdecrement*normal;
 end
 disp(sprintf(' %d/%d receiver(s) could be located on the fault', size(receivers,1), size(st,1)));
  
@@ -198,6 +203,7 @@ disp(sprintf(' %d/%d receiver(s) could be located on the fault', size(receivers,
 if plotmarker == 'y'
     plot3(receivers(:,1),receivers(:,2),receivers(:,3),'r*','MarkerSize',8)
     axis tight
+    view([150 30])
 end
 
 %disp('    Receiver coordinates at fault:'); disp(' ')
