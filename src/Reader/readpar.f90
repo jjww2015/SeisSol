@@ -534,7 +534,7 @@ CONTAINS
       ENDDO
       CLOSE(IO%UNIT%other01)      
       !
-  CASE(12, 26, 30, 119, 121) ! Plasticity with constant material properties, initial stress (loading) must be assigned to every element in the domain
+  CASE(12, 26, 30, 121) ! Plasticity with constant material properties, initial stress (loading) must be assigned to every element in the domain
            ! special case for TPV13, add other cases that use plasticity with different initial stress values here
       IF (EQN%Plasticity.EQ.1)THEN
         logInfo0(*) 'Jacobians are globally constant with rho0, mu, lambda:'
@@ -542,9 +542,44 @@ CONTAINS
         logInfo0(*) ' mu = ', EQN%mu       ! (2)
         logInfo0(*) ' lambda = ', EQN%lambda   ! (3)
       ELSE
-        logError(*) '| MaterialType 12,26, 30, 119 or 121 are only used for plastic calculations.'
+        logError(*) '| MaterialType 12,26, 30 or 121 are only used for plastic calculations.'
       ENDIF
       !
+
+  CASE(119) !Roughfaults, plasticity and Anelasticity
+ 
+      if (EQN%Anelasticity.EQ.1) THEN
+      logInfo0(*) 'Material properties are read from file : ', TRIM(EQN%MaterialFileName)
+      CALL OpenFile(                                        &
+            UnitNr       = IO%UNIT%other01                , &
+            Name         = EQN%MaterialFileName           , &
+            create       = .FALSE.                          )
+      logInfo(*) 'Reading material property file ...  '
+      READ(IO%UNIT%other01,'(i10,a)') EQN%nLayers, cdummy             ! Number of different material zones
+      READ(IO%UNIT%other01,'(i10,a)') EQN%nMechanisms, cdummy         ! Number of different attenuation mechanisms
+      logInfo(*) 'Model has ',EQN%nMechanisms,' attenuation mechanisms.'
+      READ(IO%UNIT%other01,*) EQN%FreqCentral                             ! Central frequency of the absorption band (in Hertz)
+      logInfo(*) 'with central frequency ',EQN%FreqCentral
+      READ(IO%UNIT%other01,*) EQN%FreqRatio                               ! The ratio between the maximum and minimum frequencies of our bandwidth
+      logInfo(*) 'and frequency ratio ',EQN%FreqRatio
+
+      EQN%nBackgroundVar  = 3 + EQN%nMechanisms * 4
+      EQN%nAneMaterialVar = 5        ! rho, mu, lambda, Qp, Qs
+      EQN%nVarTotal = EQN%nVar + EQN%nAneFuncperMech*EQN%nMechanisms                                                    !
+      EQN%AneMatIni = 4                                                  ! indicates where in MaterialVal begin the anelastic parameters 
+
+      ALLOCATE(EQN%MODEL(1:EQN%nLayers,EQN%nAneMaterialVar))
+      DO i = 1,EQN%nLayers
+           READ(IO%UNIT%other01,*) intDummy, EQN%MODEL(i,:)
+      ENDDO
+      CLOSE(IO%UNIT%other01)
+      else
+        logInfo0(*) 'Jacobians are globally constant with rho0, mu, lambda:'
+        logInfo0(*) ' rho0 = ', EQN%rho0     ! (1)
+        logInfo0(*) ' mu = ', EQN%mu       ! (2)
+        logInfo0(*) ' lambda = ', EQN%lambda   ! (3)
+      endif
+      
   CASE(60,61) ! special case of 1D landers example
       !
       logInfo0(*) 'Material property zones are defined by SeisSol. '
@@ -1571,7 +1606,7 @@ CONTAINS
            !BACKGROUND VALUES
            DISC%DynRup%BackgroundType = BackgroundType
            SELECT CASE(DISC%DynRup%BackgroundType)
-           CASE(0,1,2,3,4,5,7,10,11,12,13,14,15,26, 29,30,31,32,33,50,60,61,62,70,100,101,103,119,1191,120,1201,121)
+           CASE(0,1,2,3,4,5,7,10,11,12,13,14,15,26, 29,30,31,32,33,50,60,61,62,70,100,101,103,119,120,1201,121)
              EQN%Bulk_xx_0 = Bulk_xx_0
              EQN%Bulk_yy_0 = Bulk_yy_0
              EQN%Bulk_zz_0 = Bulk_zz_0

@@ -593,9 +593,24 @@ CONTAINS
         b13 =-0.1584d0
         g = 9.8D0    
 
-        MaterialVal(:,1) = EQN%rho0
-        MaterialVal(:,2) = EQN%mu
-        MaterialVal(:,3) = EQN%lambda
+        if (EQN%Anelasticity.EQ.1) THEN
+           DO iElem=1, MESH%nElem
+              EQN%LocAnelastic(iElem) = 1                                        ! Mark element with anelastic material
+              CALL ini_ATTENUATION(Theta,w_freq,Material_INF,EQN%MODEL(1,:),EQN)    ! Initialize anelastic coefficients for this zone     
+              MaterialVal(iElem,2:EQN%AneMatIni-1) = Material_INF(:)             ! Set unrelaxed material properties for this zone.                                                                      !
+              ! Fill MaterialVal vector for each element with anelastic coefficients w_freq and theta 
+              DO iMech = 1, EQN%nMechanisms
+                 MaterialVal(iElem,EQN%AneMatIni+4*(iMech-1))             = w_freq(iMech)
+                 MaterialVal(iElem,EQN%AneMatIni+4*(iMech-1)+1:EQN%AneMatIni+4*(iMech-1)+3) = Theta(iMech,:)
+              ENDDO
+           ENDDO
+        ELSE
+           MaterialVal(:,1) = EQN%rho0
+           MaterialVal(:,2) = EQN%mu
+           MaterialVal(:,3) = EQN%lambda
+        ENDIF
+
+
         ! Initialisation of IniStress(6 stress components in 3D)
         !
         ALLOCATE(EQN%IniStress(6,MESH%nElem))
