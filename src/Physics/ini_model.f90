@@ -595,6 +595,7 @@ CONTAINS
 
         if (EQN%Anelasticity.EQ.1) THEN
            DO iElem=1, MESH%nElem
+              MaterialVal(iElem,:) = EQN%MODEL(1,:)
               EQN%LocAnelastic(iElem) = 1                                        ! Mark element with anelastic material
               CALL ini_ATTENUATION(Theta,w_freq,Material_INF,EQN%MODEL(1,:),EQN)    ! Initialize anelastic coefficients for this zone     
               MaterialVal(iElem,2:EQN%AneMatIni-1) = Material_INF(:)             ! Set unrelaxed material properties for this zone.                                                                      !
