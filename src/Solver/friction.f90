@@ -124,8 +124,8 @@ MODULE Friction_mod
     REAL        :: TaylorDOF(DISC%Galerkin%nDegFr,EQN%nVarTotal,0:DISC%Galerkin%nPoly)  ! time - taylorseries for DOF
     REAL        :: Taylor1(DISC%Galerkin%nDegFr,EQN%nVarTotal,0:DISC%Galerkin%nPoly)
     REAL        :: Taylor2(DISC%Galerkin%nDegFr,EQN%nVarTotal,0:DISC%Galerkin%nPoly)
-    REAL        :: BndVar1(DISC%Galerkin%nDegFr,EQN%nVarTotal,0:DISC%Galerkin%nPoly)
-    REAL        :: BndVar2(DISC%Galerkin%nDegFr,EQN%nVarTotal,0:DISC%Galerkin%nPoly)    
+    REAL        :: BndVar1(DISC%Galerkin%nDegFr,EQN%nVar,0:DISC%Galerkin%nPoly)
+    REAL        :: BndVar2(DISC%Galerkin%nDegFr,EQN%nVar,0:DISC%Galerkin%nPoly)    
     REAL        :: NorStressGP(1:DISC%Galerkin%nBndGP,1:DISC%Galerkin%nTimeGP)
     REAL        :: TractionGP_XY(1:DISC%Galerkin%nBndGP,1:DISC%Galerkin%nTimeGP)
     REAL        :: TractionGP_XZ(1:DISC%Galerkin%nBndGP,1:DISC%Galerkin%nTimeGP)
@@ -439,8 +439,8 @@ MODULE Friction_mod
 #endif
        ! rotation of the quantities to face-aligned coordinate system
        do iPoly=0, LocPoly
-           bndVar1( :, :, iPoly) = matmul( taylor1( :, :, iPoly), mesh%fault%forwardRotation( :, :, iFace) )
-           bndVar2( :, :, iPoly) = matmul( taylor2( :, :, iPoly), mesh%fault%forwardRotation( :, :, iFace) )
+           bndVar1( :, :, iPoly) = matmul( taylor1( :, 1:EQN%nVar, iPoly), mesh%fault%forwardRotation( :, :, iFace) )
+           bndVar2( :, :, iPoly) = matmul( taylor2( :, 1:EQN%nVar, iPoly), mesh%fault%forwardRotation( :, :, iFace) )
        enddo
 
        !
@@ -578,8 +578,9 @@ MODULE Friction_mod
     ENDDO
 #else
     do iFace=1,DISC%DynRup%nDRElems
+      dudt(:,:) = DISC%DynRup%DRupdates(:,:,iFace) ! Avoid array temporary warning
       call c_interoperability_addToDofs( i_meshId           = DISC%DynRup%indicesOfDRElems(iFace), \
-                                         i_update           = DISC%DynRup%DRupdates(1:DISC%Galerkin%nDegFr,1:EQN%nVar,iFace), \
+                                         i_update           = dudt, \
                                          numberOfQuantities = EQN%nVar )
     enddo
 #endif
@@ -611,8 +612,8 @@ MODULE Friction_mod
     REAL        :: UVelGP(DISC%Galerkin%nBndGP,DISC%Galerkin%nTimeGP)
     REAL        :: XYStressGP(DISC%Galerkin%nBndGP,DISC%Galerkin%nTimeGP)
     REAL        :: XZStressGP(DISC%Galerkin%nBndGP,DISC%Galerkin%nTimeGP)
-    REAL        :: BndVar1(DISC%Galerkin%nDegFr,EQN%nVarTotal,0:DISC%Galerkin%nPoly)
-    REAL        :: BndVar2(DISC%Galerkin%nDegFr,EQN%nVarTotal,0:DISC%Galerkin%nPoly)
+    REAL        :: BndVar1(DISC%Galerkin%nDegFr,EQN%nVar,0:DISC%Galerkin%nPoly)
+    REAL        :: BndVar2(DISC%Galerkin%nDegFr,EQN%nVar,0:DISC%Galerkin%nPoly)
     REAL        :: LocNorStress, LocXYStress, LocXZStress, LocUVel
     REAL        :: rho,rho_neig,w_speed(2),w_speed_neig(2)
     REAL        :: phi1,phi2
