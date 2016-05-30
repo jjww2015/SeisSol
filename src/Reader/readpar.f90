@@ -1300,7 +1300,7 @@ CONTAINS
     TYPE (tInputOutput)        :: IO
     LOGICAL                    :: CalledFromStructCode
     ! localVariables
-    INTEGER                    :: OutputMask(10)
+    INTEGER                    :: OutputMask(11)
     INTEGER                    :: printtimeinterval
     INTEGER                    :: printIntervalCriterion
     INTEGER                    :: refinement_strategy, refinement
@@ -1315,8 +1315,7 @@ CONTAINS
     printtimeinterval_sec = 1d0
     printIntervalCriterion = 1
     OutputMask(:) = 1
-    OutputMask(4:10) = 0
-
+    OutputMask(4:11) = 0
     refinement_strategy = 2
     refinement = 2
     !
@@ -1330,11 +1329,11 @@ CONTAINS
     endif
 
     ! if 2, printtimeinterval is set afterwards, when dt is known
-    DISC%DynRup%DynRup_out_elementwise%OutputMask(1:10) =  OutputMask(1:10)      ! read info of desired output 1/ yes, 0/ no
+    DISC%DynRup%DynRup_out_elementwise%OutputMask(1:11) =  OutputMask(1:11)      ! read info of desired output 1/ yes, 0/ no
                                                                                      ! position: 1/ slip rate 2/ stress 3/ normal velocity
                                                                                      ! 4/ in case of rate and state output friction and state variable
                                                                                      ! 5/ background values 6/Slip 7/rupture speed 8/Absolute 
-                                                                                     ! Slip 9/Peak SlipRate 10/Slip duration
+                                                                                     ! Slip 9/Peak SlipRate 10/rupture arrival 11/Slip duration
     DISC%DynRup%DynRup_out_elementwise%refinement_strategy = refinement_strategy
 
     IF (DISC%DynRup%DynRup_out_elementwise%refinement_strategy.NE.2 .AND. & 
@@ -1509,6 +1508,7 @@ CONTAINS
     INTENT(INOUT)                          :: IO, EQN, DISC, BND
     INTEGER                                :: FL, BackgroundType, Nucleation, inst_healing, RF_output_on, &
                                               OutputPointType, magnitude_output_on,  energy_rate_output_on, read_fault_file
+
     CHARACTER(600)                         :: FileName_BackgroundStress
     REAL                                   :: Bulk_xx_0, Bulk_yy_0, &
                                               Bulk_zz_0, ShearXY_0, ShearYZ_0, ShearXZ_0, &
@@ -1519,6 +1519,7 @@ CONTAINS
                                               NucDirX, NucXmin, NucXmax, NucDirY, NucYmin, NucYmax, &
                                               NucBulk_xx_0, NucBulk_yy_0, NucBulk_zz_0, NucShearXY_0, &
                                               NucShearYZ_0, NucShearXZ_0, NucRS_sv0, r_s, cohesion_0, energy_rate_printtimeinterval
+
     !------------------------------------------------------------------------
     NAMELIST                              /DynamicRupture/ FL, BackgroundType, Bulk_xx_0, Bulk_yy_0, &
                                                 Bulk_zz_0, ShearXY_0, ShearYZ_0, ShearXZ_0, &
@@ -1751,7 +1752,7 @@ CONTAINS
            ! moment rate and frictional energy rate output on=1, off=0
            DISC%DynRup%energy_rate_output_on = energy_rate_output_on
            DISC%DynRup%energy_rate_printtimeinterval = energy_rate_printtimeinterval
-           !
+
            !
            DISC%DynRup%OutputPointType = OutputPointType
 
