@@ -378,7 +378,6 @@ MODULE Eval_friction_law_mod
      !idem
      IF (LocSR.GT.DISC%DynRup%PeakSR(iFace,iBndGP)) THEN
         DISC%DynRup%PeakSR(iFace,iBndGP) = LocSR
-        DISC%DynRup%PeakSRtime(iFace,iBndGP) = time
      ENDIF
      !
      DISC%DynRup%Mu(iFace,iBndGP)        = LocMu
@@ -553,7 +552,6 @@ MODULE Eval_friction_law_mod
      ENDIF
      IF (LocSR.GT.DISC%DynRup%PeakSR(iFace,iBndGP)) THEN
         DISC%DynRup%PeakSR(iFace,iBndGP) = LocSR
-        DISC%DynRup%PeakSRtime(iFace,iBndGP) = time
      ENDIF
      !
      DISC%DynRup%Mu(iFace,iBndGP)        = LocMu
@@ -744,7 +742,6 @@ MODULE Eval_friction_law_mod
      !idem
      IF (LocSR.GT.DISC%DynRup%PeakSR(iFace,iBndGP)) THEN
         DISC%DynRup%PeakSR(iFace,iBndGP) = LocSR
-        DISC%DynRup%PeakSRtime(iFace,iBndGP) = time
      ENDIF
      !
      DISC%DynRup%Mu(iFace,iBndGP)        = LocMu
@@ -963,7 +960,6 @@ MODULE Eval_friction_law_mod
      ENDIF
      IF (LocSR.GT.DISC%DynRup%PeakSR(iFace,iBndGP)) THEN
         DISC%DynRup%PeakSR(iFace,iBndGP) = LocSR
-        DISC%DynRup%PeakSRtime(iFace,iBndGP) = time
      ENDIF
      !
      DISC%DynRup%Mu(iFace,iBndGP)        = LocMu
@@ -1164,7 +1160,6 @@ MODULE Eval_friction_law_mod
      ENDIF
      IF (LocSR.GT.DISC%DynRup%PeakSR(iFace,iBndGP)) THEN
         DISC%DynRup%PeakSR(iFace,iBndGP) = LocSR
-        DISC%DynRup%PeakSRtime(iFace,iBndGP) = time
      ENDIF
      !
      DISC%DynRup%Mu(iFace,iBndGP)        = LocMu
@@ -1467,7 +1462,6 @@ MODULE Eval_friction_law_mod
      ENDIF
      IF (LocSR.GT.DISC%DynRup%PeakSR(iFace,iBndGP)) THEN
         DISC%DynRup%PeakSR(iFace,iBndGP) = LocSR
-        DISC%DynRup%PeakSRtime(iFace,iBndGP) = time
      ENDIF
      !
      DISC%DynRup%Mu(iFace,iBndGP)        = LocMu
@@ -1777,7 +1771,6 @@ MODULE Eval_friction_law_mod
      ENDIF
      IF (LocSR.GT.DISC%DynRup%PeakSR(iFace,iBndGP)) THEN
         DISC%DynRup%PeakSR(iFace,iBndGP) = LocSR
-        DISC%DynRup%PeakSRtime(iFace,iBndGP) = time
      ENDIF
      !
      DISC%DynRup%Mu(iFace,iBndGP)        = LocMu
