@@ -616,7 +616,7 @@ CONTAINS
                 compute_VR = .TRUE.
                 DO jBndGP = 1,DISC%Galerkin%nBndGP
                    !IF (DISC%DynRup%rupture_time(iFace,jBndGP).EQ.0) THEN
-                   IF (DISC%DynRup%PeakSRtime(iFace,jBndGP).EQ.0).OR.(abs(DISC%DynRup%PeakSRtime(iFace,jBndGP)-time).LE.0.01) THEN
+                   IF ((DISC%DynRup%PeakSRtime(iFace,jBndGP).EQ.0).OR.(abs(DISC%DynRup%PeakSRtime(iFace,jBndGP)-time).LE.0.01)) THEN
                       compute_VR = .FALSE.
                       Vr = 0d0
                    ENDIF
