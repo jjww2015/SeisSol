@@ -890,6 +890,8 @@ MODULE TypesDef
      REAL, POINTER                          :: SlipRate1(:,:) => NULL()                  !< Slip Rate at given fault node
      REAL, POINTER                          :: SlipRate2(:,:) => NULL()                  !< Slip Rate at given fault node
      REAL, POINTER                          :: PeakSR(:,:) => NULL()                     !< Slip Rate at given fault node
+     REAL, POINTER                          :: rupture_time2(:,:) => NULL()              !< rupture_time for Vr output
+     LOGICAL, POINTER                       :: RF2(:,:) => NULL()                        !< rupture_time for Vr output
      REAL, POINTER                          :: TracXZ(:,:) => NULL()                     !< Traction at given fault node
      REAL, POINTER                          :: TracXY(:,:) => NULL()                     !< Traction at given fault node
      REAL, POINTER                          :: Mu(:,:) => NULL()                         !< Current friction coefficient at given fault node

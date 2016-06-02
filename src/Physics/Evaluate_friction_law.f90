@@ -379,6 +379,10 @@ MODULE Eval_friction_law_mod
      IF (LocSR.GT.DISC%DynRup%PeakSR(iFace,iBndGP)) THEN
         DISC%DynRup%PeakSR(iFace,iBndGP) = LocSR
      ENDIF
+     IF (DISC%DynRup%RF2(iFace,iBndGP) .AND. LocSR .GT. 0.5D0) THEN
+        DISC%DynRup%rupture_time2(iFace, iBndGP)=time
+         DISC%DynRup%RF2(iFace,iBndGP) = .FALSE.
+     ENDIF
      !
      DISC%DynRup%Mu(iFace,iBndGP)        = LocMu
      DISC%DynRup%SlipRate1(iFace,iBndGP) = LocSR1
@@ -552,6 +556,10 @@ MODULE Eval_friction_law_mod
      ENDIF
      IF (LocSR.GT.DISC%DynRup%PeakSR(iFace,iBndGP)) THEN
         DISC%DynRup%PeakSR(iFace,iBndGP) = LocSR
+     ENDIF
+     IF (DISC%DynRup%RF2(iFace,iBndGP) .AND. LocSR .GT. 0.5D0) THEN
+        DISC%DynRup%rupture_time2(iFace, iBndGP)=time
+         DISC%DynRup%RF2(iFace,iBndGP) = .FALSE.
      ENDIF
      !
      DISC%DynRup%Mu(iFace,iBndGP)        = LocMu
@@ -742,6 +750,10 @@ MODULE Eval_friction_law_mod
      !idem
      IF (LocSR.GT.DISC%DynRup%PeakSR(iFace,iBndGP)) THEN
         DISC%DynRup%PeakSR(iFace,iBndGP) = LocSR
+     ENDIF
+     IF (DISC%DynRup%RF2(iFace,iBndGP) .AND. LocSR .GT. 0.5D0) THEN
+        DISC%DynRup%rupture_time2(iFace, iBndGP)=time
+         DISC%DynRup%RF2(iFace,iBndGP) = .FALSE.
      ENDIF
      !
      DISC%DynRup%Mu(iFace,iBndGP)        = LocMu
@@ -961,6 +973,10 @@ MODULE Eval_friction_law_mod
      IF (LocSR.GT.DISC%DynRup%PeakSR(iFace,iBndGP)) THEN
         DISC%DynRup%PeakSR(iFace,iBndGP) = LocSR
      ENDIF
+     IF (DISC%DynRup%RF2(iFace,iBndGP) .AND. LocSR .GT. 0.5D0) THEN
+        DISC%DynRup%rupture_time2(iFace, iBndGP)=time
+         DISC%DynRup%RF2(iFace,iBndGP) = .FALSE.
+     ENDIF
      !
      DISC%DynRup%Mu(iFace,iBndGP)        = LocMu
      DISC%DynRup%SlipRate1(iFace,iBndGP) = LocSR1
@@ -1160,6 +1176,10 @@ MODULE Eval_friction_law_mod
      ENDIF
      IF (LocSR.GT.DISC%DynRup%PeakSR(iFace,iBndGP)) THEN
         DISC%DynRup%PeakSR(iFace,iBndGP) = LocSR
+     ENDIF
+     IF (DISC%DynRup%RF2(iFace,iBndGP) .AND. LocSR .GT. 0.5D0) THEN
+        DISC%DynRup%rupture_time2(iFace, iBndGP)=time
+         DISC%DynRup%RF2(iFace,iBndGP) = .FALSE.
      ENDIF
      !
      DISC%DynRup%Mu(iFace,iBndGP)        = LocMu
@@ -1462,6 +1482,10 @@ MODULE Eval_friction_law_mod
      ENDIF
      IF (LocSR.GT.DISC%DynRup%PeakSR(iFace,iBndGP)) THEN
         DISC%DynRup%PeakSR(iFace,iBndGP) = LocSR
+     ENDIF
+     IF (DISC%DynRup%RF2(iFace,iBndGP) .AND. LocSR .GT. 0.5D0) THEN
+        DISC%DynRup%rupture_time2(iFace, iBndGP)=time
+         DISC%DynRup%RF2(iFace,iBndGP) = .FALSE.
      ENDIF
      !
      DISC%DynRup%Mu(iFace,iBndGP)        = LocMu
@@ -1771,6 +1795,10 @@ MODULE Eval_friction_law_mod
      ENDIF
      IF (LocSR.GT.DISC%DynRup%PeakSR(iFace,iBndGP)) THEN
         DISC%DynRup%PeakSR(iFace,iBndGP) = LocSR
+     ENDIF
+     IF (DISC%DynRup%RF2(iFace,iBndGP) .AND. LocSR .GT. 0.5D0) THEN
+        DISC%DynRup%rupture_time2(iFace, iBndGP)=time
+         DISC%DynRup%RF2(iFace,iBndGP) = .FALSE.
      ENDIF
      !
      DISC%DynRup%Mu(iFace,iBndGP)        = LocMu

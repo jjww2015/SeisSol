@@ -1111,6 +1111,8 @@ CONTAINS
       ALLOCATE(DISC%DynRup%Mu(MESH%Fault%nSide,DISC%Galerkin%nBndGP))
       ALLOCATE(DISC%DynRup%StateVar(MESH%Fault%nSide,DISC%Galerkin%nBndGP))
       ALLOCATE(DISC%DynRup%PeakSR(MESH%Fault%nSide,DISC%Galerkin%nBndGP))
+      ALLOCATE(DISC%DynRup%rupture_time2(MESH%Fault%nSide,DISC%Galerkin%nBndGP))
+      ALLOCATE(DISC%DynRup%RF2(MESH%Fault%nSide,DISC%Galerkin%nBndGP))
       !
       DISC%DynRup%SlipRate1     = EQN%IniSlipRate1
       DISC%DynRup%SlipRate2     = EQN%IniSlipRate2
@@ -1122,6 +1124,8 @@ CONTAINS
       DISC%DynRup%Mu(:,:)       = EQN%IniMu(:,:)
       DISC%DynRup%StateVar(:,:) = EQN%IniStateVar(:,:)
       DISC%DynRup%PeakSR        = 0.0D0
+      DISC%DynRup%rupture_time2 = 0.0D0
+      DISC%DynRup%RF2 = .TRUE.
 
     else
         ! Allocate dummy arrays to avoid debug errors
@@ -1132,7 +1136,9 @@ CONTAINS
             DISC%DynRup%Slip2(0,0),          &
             DISC%DynRup%Mu(0,0),             &
             DISC%DynRup%StateVar(0,0),       &
-            DISC%DynRup%PeakSR(0,0),       &
+            DISC%DynRup%PeakSR(0,0),         &
+            DISC%DynRup%rupture_time2 (0,0), &
+            DISC%DynRup%RF2 (0,0),           &
             DISC%DynRup%Strength(0,0))
     ENDIF
     !
