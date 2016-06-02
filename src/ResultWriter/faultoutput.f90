@@ -615,7 +615,8 @@ CONTAINS
                 ! To compute accurately dt/dxi, all rupture_time have to be defined on the element
                 compute_VR = .TRUE.
                 DO jBndGP = 1,DISC%Galerkin%nBndGP
-                   IF (DISC%DynRup%rupture_time(iFace,jBndGP).EQ.0) THEN
+                   !IF (DISC%DynRup%rupture_time(iFace,jBndGP).EQ.0) THEN
+                   IF (DISC%DynRup%PeakSRtime(iFace,jBndGP).EQ.0).OR.(abs(DISC%DynRup%PeakSRtime(iFace,jBndGP)-time).LE.0.01) THEN
                       compute_VR = .FALSE.
                       Vr = 0d0
                    ENDIF
@@ -626,22 +627,22 @@ CONTAINS
                 ! The rupture velocity is based on the gradient of the rupture time
                 ! The gradient is not expected to be accurate for the side gauss points
                 !! We consider then the next internal gauss point if the closest gauss point is external
-                !i1 = int((iBndGP-1)/(DISC%Galerkin%nPoly + 2))+1
-                !j1 = modulo((iBndGP-1),(DISC%Galerkin%nPoly + 2))+1
-                !IF (i1.EQ.1) THEN
-                !   i1=i1+1
-                !ELSE IF (i1.EQ.(DISC%Galerkin%nPoly + 2)) THEN
-                !   i1=i1-1
-                !ENDIF
-                !IF (j1.EQ.1) THEN
-                !   j1=j1+1
-                !ELSE IF (j1.EQ.(DISC%Galerkin%nPoly + 2)) THEN
-                !   j1=j1-1
-                !ENDIF
-                !iBndGP = (i1-1)*(DISC%Galerkin%nPoly + 2)+j1
+                i1 = int((iBndGP-1)/(DISC%Galerkin%nPoly + 2))+1
+                j1 = modulo((iBndGP-1),(DISC%Galerkin%nPoly + 2))+1
+                IF (i1.EQ.1) THEN
+                   i1=i1+1
+                ELSE IF (i1.EQ.(DISC%Galerkin%nPoly + 2)) THEN
+                   i1=i1-1
+                ENDIF
+                IF (j1.EQ.1) THEN
+                   j1=j1+1
+                ELSE IF (j1.EQ.(DISC%Galerkin%nPoly + 2)) THEN
+                   j1=j1-1
+                ENDIF
+                iBndGP = (i1-1)*(DISC%Galerkin%nPoly + 2)+j1
 
-                i1  = int((DISC%Galerkin%nPoly + 2 -1)/2)+1
-                iBndGP = (i1-1)*(DISC%Galerkin%nPoly + 2)+i1
+                !i1  = int((DISC%Galerkin%nPoly + 2 -1)/2)+1
+                !iBndGP = (i1-1)*(DISC%Galerkin%nPoly + 2)+i1
 
                 !project rupture_time onto the basis functions
                 nDegFr2d = (DISC%Galerkin%nPoly + 1)*(DISC%Galerkin%nPoly + 2)/2
@@ -655,7 +656,8 @@ CONTAINS
                   DO iDegFr = 1, nDegFr2d
                      call BaseFunc_Tri(phiT,iDegFr,chi,tau,DISC%Galerkin%nPoly,DISC)
                      projected_RT(iDegFr) = projected_RT(iDegFr) + &
-                        DISC%Galerkin%BndGaussW_Tet(jBndGP)*DISC%DynRup%rupture_time(iFace,jBndGP)*phiT
+                        !DISC%Galerkin%BndGaussW_Tet(jBndGP)*DISC%DynRup%rupture_time(iFace,jBndGP)*phiT
+                        DISC%Galerkin%BndGaussW_Tet(jBndGP)*DISC%DynRup%PeakSRtime(iFace,jBndGP)*phiT
                   ENDDO
                 ENDDO
                 DO iDegFr = 1,nDegFr2d
